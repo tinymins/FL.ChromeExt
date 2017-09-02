@@ -1,0 +1,14 @@
+﻿{
+  "manifest_version": 2,
+
+  "name": "FL Auto",
+  "description": "让FL网页更好用让FL网页更好用",
+  "version": "0.0.1",
+  "browser_action": {
+    "default_popup": "index.html#/popup",
+    "default_title": "__MSG_exttitle__"
+  },
+  "web_accessible_resources": ["scripts.insert/*"],
+
+  "permissions": ["activeTab", "http://trace.51fanli.com/"]
+}

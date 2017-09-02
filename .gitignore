@@ -1,0 +1,8 @@
+.DS_Store
+node_modules/
+dist.crx
+dist.pem
+dist/index.html
+dist/static/
+dist/favicon.ico
+npm-debug.log*

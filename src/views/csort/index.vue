@@ -1,0 +1,118 @@
+<template>
+  <div>
+    <div class="query">
+      <el-input
+        class="textarea"
+        type="textarea"
+        :autosize="{ minRows: 5, maxRows: 20}"
+        placeholder="请输入商品ID列表 每行一个"
+        v-model="goodsIds">
+      </el-input>
+      <el-input
+        class="textarea"
+        type="textarea"
+        :autosize="{ minRows: 5, maxRows: 20}"
+        placeholder="超级排序列表 与左侧按行对应 连续相同用空格隔开 如 “100 3” 表示连续三个 100"
+        v-model="sortVals">
+      </el-input>
+    </div>
+    <div class="query">
+      <el-button type="primary" class="query-btn" @click="startQuery">开始查询</el-button>
+    </div>
+    <div class="list">
+      <el-table :data="goods" class="list-table">
+        <el-table-column label="图片" width="80">
+          <template scope="scope">
+            <img :src="scope.row.image" style="max-width: 50px; max-height: 50px;"></img>
+          </template>
+        </el-table-column>
+        <el-table-column prop="uid" label="ID" width="100">
+        </el-table-column>
+        <el-table-column prop="id" label="商品ID" width="180">
+        </el-table-column>
+        <el-table-column label="商品名称">
+          <template scope="scope">
+            <a :href="scope.row.url" style="color: #2AB3DE;" target="__blank">{{ scope.row.name }}</a>
+          </template>
+        </el-table-column>
+        <el-table-column prop="sort" label="当前超级排序" width="80">
+        </el-table-column>
+        <el-table-column prop="newSort" label="目标超级排序" width="80">
+        </el-table-column>
+        <el-table-column label="操作" width="100">
+          <template scope="scope">
+            <el-button
+              :type="scope.row.sort === scope.row.newSort ? 'success' : 'primary'"
+              :icon="scope.row.sort === scope.row.newSort ? 'circle-check' : (scope.row.submitting ? 'loading' : '')"
+              @click="submit([{ id: scope.row.id, uid: scope.row.uid, sort: scope.row.newSort }])"
+            >{{ scope.row.sort === scope.row.newSort ? '' : '确认' }}</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    <div class="submit">
+      <el-button type="primary" class="submit-btn" @click="submit()"
+        :type="allSuccess ? 'success' : 'primary'"
+        :icon="hasSubmitting ? 'loading' : (allSuccess ? 'circle-check' : '')"
+      >全部确认</el-button>
+    </div>
+  </div>
+</template>
+<script>
+import { mapActions, mapState } from 'vuex';
+import { Input, Button, Table, TableColumn } from 'element-ui';
+
+export default {
+  components: {
+    [Input.name]: Input,
+    [Button.name]: Button,
+    [Table.name]: Table,
+    [TableColumn.name]: TableColumn,
+  },
+  computed: {
+    ...mapState('csort', ['goods', 'submitting']),
+    allSuccess() {
+      return this.goods.length !== 0 && this.goods.filter(c => c.sort !== c.newSort).length === 0;
+    },
+    hasSubmitting() {
+      return this.goods.length !== 0 && this.goods.filter(c => !c.submitting).length === 0;
+    },
+  },
+  methods: {
+    ...mapActions('csort', {
+      csortQuery: 'CSORT_QUERY',
+      submitSort: 'CSORT_SUBMIT',
+    }),
+    startQuery() {
+      this.csortQuery({
+        ids: this.goodsIds.split('\n'),
+        sorts: this.sortVals.split('\n'),
+      });
+    },
+    submit(values) {
+      let list = values;
+      if (!list) {
+        list = this.goods.map((v) => {
+          const p = v;
+          return {
+            id: p.id,
+            uid: p.uid,
+            sort: p.newSort,
+          };
+        });
+      }
+      this.submitSort(list);
+    },
+  },
+  data() {
+    return {
+      goodsIds: '',
+      sortVals: '',
+    };
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+@import '../../styles/views/csort/index.scss';
+</style>
