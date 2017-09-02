@@ -22,7 +22,7 @@ const routes = [].concat(
 );
 
 const router = new VueRouter({
-  base: '',
+  base: __dirname,
   // base: 'test',
   routes,
   mode: 'hash',

@@ -11,7 +11,6 @@ import { isDevelop } from '@/utils/util';
 
 export const API_HOST = isDevelop() ? 'https://dev.haimanchajian.com/api' : '/api';
 
-// Dynamic load different indicator and messagebox due to device type
 let indicatorCount = 0;
 let Indicator = () => { console.warn('Indicator has not been loaded yet!'); };
 let MessageBox = () => { console.warn('MessageBox has not been loaded yet!'); };
