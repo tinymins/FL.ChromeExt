@@ -50,14 +50,14 @@
         </el-table-column>
         <el-table-column prop="newSort" label="目标超级排序" width="80">
         </el-table-column>
-        <el-table-column label="操作" width="100">
+        <el-table-column label="操作" width="110">
           <template scope="scope">
             <el-button
               :type="scope.row.newSort === undefined ? 'danger' : (scope.row.sort === scope.row.newSort ? 'success' : 'primary')"
               :icon="scope.row.newSort === undefined ? 'circle-close' : (scope.row.sort === scope.row.newSort ? 'circle-check' : (scope.row.submitting ? 'loading' : ''))"
               :disabled="scope.row.newSort === undefined"
               @click="submit([{ id: scope.row.id, uid: scope.row.uid, sort: scope.row.newSort }])"
-            >{{ scope.row.sort === scope.row.newSort ? '' : '确认' }}</el-button>
+            >{{ scope.row.sort === scope.row.newSort ? '完成' : '确认' }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -67,7 +67,7 @@
         :type="allSuccess ? 'success' : 'primary'"
         :icon="hasSubmitting ? 'loading' : (allSuccess ? 'circle-check' : '')"
         :disabled="hasSubmitable"
-      >全部确认</el-button>
+      >{{ allSuccess ? '全部完成' : '全部确认' }}</el-button>
     </div>
   </div>
 </template>
