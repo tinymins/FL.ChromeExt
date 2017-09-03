@@ -2,7 +2,7 @@
  * @Author: Zhai Yiming (root@derzh.com)
  * @Date:   2017-09-02 17:45:27
  * @Last Modified by:   Zhai Yiming
- * @Last Modified time: 2017-09-03 16:00:49
+ * @Last Modified time: 2017-09-03 16:13:50
  */
 /* eslint no-param-reassign: ["error", { "props": false }] */
 
@@ -27,7 +27,7 @@ export default {
       const hasRequest = local ? 0 : list.filter(
         p => state.goods.filter(c => c.id === p.id).length === 0,
       ).length > 0;
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         if (hasRequest) {
           openIndicator();
         }
