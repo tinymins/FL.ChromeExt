@@ -2,7 +2,7 @@
  * @Author: Zhai Yiming (root@derzh.com)
  * @Date:   2017-09-02 17:45:27
  * @Last Modified by:   Zhai Yiming
- * @Last Modified time: 2017-09-03 16:37:05
+ * @Last Modified time: 2017-09-03 16:47:28
  */
 /* eslint no-param-reassign: ["error", { "props": false }] */
 
@@ -89,6 +89,7 @@ export default {
   mutations: {
     [CSORT.QUERY](state, ids) {
       state.goods = state.goods.filter(c => ids.includes(c.id));
+      state.htmls = state.htmls.filter(c => ids.includes(c.id) && c.matched);
     },
     [CSORT.QUERY_UPDATE](state, { p }) {
       const g = state.goods.find(c => c.id === p.id);
@@ -101,6 +102,7 @@ export default {
     [CSORT.QUERY_SUCCESS](state, { p, html }) {
       const re = /data-id='(\d+)' data-numiid='(\d+)'[^]+'J-list-name'><a href="([^"]+)"[^]+" alt="([^"]+)" data-original="([^"]+)"[^]+>已启用<[^]+ajaxSetAsort\(\1,'asort'[^]+value="(\d+)" id="csort\1"/gui;
       let r = re.exec(html);
+      const matched = !!r;
       while (r) {
         state.goods.push({
           uid: r[1],
@@ -114,7 +116,7 @@ export default {
         });
         r = re.exec(html);
       }
-      state.htmls.push({ id: p.id, uid: p.uid, html });
+      state.htmls.push({ id: p.id, html, matched });
     },
     [CSORT.SUBMIT](state, p) {
       state.goods.filter(c => c.uid === p.uid).forEach((c) => { c.submitting = true; });
