@@ -56,7 +56,7 @@
               :type="scope.row.newSort === undefined ? 'danger' : (scope.row.sort === scope.row.newSort ? 'success' : 'primary')"
               :icon="scope.row.newSort === undefined ? 'circle-close' : (scope.row.sort === scope.row.newSort ? 'circle-check' : (scope.row.submitting ? 'loading' : ''))"
               :disabled="scope.row.newSort === undefined"
-              @click="submit([{ id: scope.row.id, uid: scope.row.uid, sort: scope.row.newSort }])"
+              @click="submit([scope.row])"
             >{{ scope.row.sort === scope.row.newSort ? '完成' : '确认' }}</el-button>
           </template>
         </el-table-column>
@@ -123,20 +123,13 @@ export default {
       this.csortQuery({
         local,
         ids: this.goodsIds,
-        sorts: this.sortVals,
+        newSorts: this.sortVals,
       });
     },
     submit(values) {
       let list = values;
       if (!list) {
-        list = this.goods.map((v) => {
-          const p = v;
-          return {
-            id: p.id,
-            uid: p.uid,
-            sort: p.newSort,
-          };
-        });
+        list = this.goods;
       }
       this.submitSort(list);
     },

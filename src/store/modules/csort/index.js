@@ -2,7 +2,7 @@
  * @Author: Zhai Yiming (root@derzh.com)
  * @Date:   2017-09-02 17:45:27
  * @Last Modified by:   Zhai Yiming
- * @Last Modified time: 2017-09-03 16:13:50
+ * @Last Modified time: 2017-09-03 16:37:05
  */
 /* eslint no-param-reassign: ["error", { "props": false }] */
 
@@ -18,11 +18,11 @@ export default {
   },
   getters: {},
   actions: {
-    [CSORT.QUERY]({ commit, state }, { ids, sorts, local = false }) {
+    [CSORT.QUERY]({ commit, state }, { ids, newSorts, local = false }) {
       commit(CSORT.QUERY, ids);
       const list = ids.map((id, index) => ({
         id,
-        sort: sorts[index],
+        newSort: newSorts[index],
       }));
       const hasRequest = local ? 0 : list.filter(
         p => state.goods.filter(c => c.id === p.id).length === 0,
@@ -39,7 +39,7 @@ export default {
             resolve();
             return;
           }
-          const p = list.pop();
+          const p = list.shift();
           if (hasRequest && state.goods.filter(c => c.id === p.id).length === 0) {
             api.queryList(p.id).then((res) => {
               commit(CSORT.QUERY_SUCCESS, { p, html: res.data });
@@ -55,31 +55,35 @@ export default {
         next();
       });
     },
-    [CSORT.SUBMIT]({ commit, state }, list) {
-      const promises = [];
-      list.forEach((p) => {
-        if (p.sort === undefined) {
-          return;
-        }
-        if (state.goods.filter(c => c.uid === p.uid && !c.submitting).length !== 0) {
-          promises.push(new Promise((resolve, reject) => {
-            api.submit(p.uid, p.sort).then((res) => {
-              if (res.data.status === 1) {
-                commit(CSORT.SUBMIT_SUCCESS, p);
-                resolve();
-              } else {
-                commit(CSORT.SUBMIT_FAILURE, p);
-                reject();
-              }
-            }).catch(() => {
+    [CSORT.SUBMIT]({ commit, state }, orilist) {
+      const list = orilist.filter(p => p.newSort !== undefined && p.newSort !== p.sort);
+      if (list.length === 0) {
+        return Promise.resolve();
+      }
+      return new Promise((resolve) => {
+        openIndicator();
+        const next = () => {
+          if (list.length === 0) {
+            closeIndicator();
+            resolve();
+            return;
+          }
+          const p = list.shift();
+          api.submit(p.uid, p.newSort).then((res) => {
+            if (res.data.status === 1) {
+              commit(CSORT.SUBMIT_SUCCESS, p);
+              next();
+            } else {
               commit(CSORT.SUBMIT_FAILURE, p);
-              reject();
-            });
-          }));
-          commit(CSORT.SUBMIT, p);
-        }
+              next();
+            }
+          }).catch(() => {
+            commit(CSORT.SUBMIT_FAILURE, p);
+            next();
+          });
+        };
+        next();
       });
-      return Promise.all(promises);
     },
   },
   mutations: {
@@ -90,22 +94,22 @@ export default {
       const g = state.goods.find(c => c.id === p.id);
       state.goods = state.goods.filter(c => c.id !== p.id);
       if (g) {
-        g.newSort = p.sort;
-        state.goods.unshift(g);
+        g.newSort = p.newSort;
+        state.goods.push(g);
       }
     },
     [CSORT.QUERY_SUCCESS](state, { p, html }) {
       const re = /data-id='(\d+)' data-numiid='(\d+)'[^]+'J-list-name'><a href="([^"]+)"[^]+" alt="([^"]+)" data-original="([^"]+)"[^]+>已启用<[^]+ajaxSetAsort\(\1,'asort'[^]+value="(\d+)" id="csort\1"/gui;
       let r = re.exec(html);
       while (r) {
-        state.goods.unshift({
+        state.goods.push({
           uid: r[1],
           id: r[2],
           url: r[3],
           name: r[4],
           image: r[5],
           sort: r[6],
-          newSort: p.sort,
+          newSort: p.newSort,
           submitting: false,
         });
         r = re.exec(html);
@@ -118,7 +122,7 @@ export default {
     [CSORT.SUBMIT_SUCCESS](state, p) {
       state.goods.filter(c => c.uid === p.uid).forEach((c) => {
         c.submitting = false;
-        c.sort = p.sort;
+        c.sort = p.newSort;
       });
     },
     [CSORT.SUBMIT_FAILURE](state, p) {
