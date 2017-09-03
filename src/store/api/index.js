@@ -79,11 +79,15 @@ export const onResponseError = (error) => {
   return Promise.reject(error);
 };
 
+export const openIndicator = () => { Indicator.open(); };
+export const closeIndicator = () => { Indicator.close(); };
+
 export const http = axios.create({
   baseURL: API_HOST,
   withCredentials: true,
   timeout: !isDevelop() && 10000,
 });
+
 http.postForm = (url, data) => http.post(url, qs.stringify(data));
 http.interceptors.request.use(onRequest, onRequestError);
 http.interceptors.response.use(onResponse, onResponseError);

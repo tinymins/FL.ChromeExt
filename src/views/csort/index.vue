@@ -17,7 +17,8 @@
       </el-input>
     </div>
     <div class="query">
-      <el-button type="primary" class="query-btn" @click="startQuery">开始查询</el-button>
+      <el-button type="primary" class="query-btn" @click="startQuery(false)">查询商品列表</el-button>
+      <el-button type="primary" class="query-btn" @click="startQuery(true)">重新解析超级排序</el-button>
     </div>
     <div class="list">
       <el-table :data="goods" class="list-table">
@@ -42,8 +43,9 @@
         <el-table-column label="操作" width="100">
           <template scope="scope">
             <el-button
-              :type="scope.row.sort === scope.row.newSort ? 'success' : 'primary'"
-              :icon="scope.row.sort === scope.row.newSort ? 'circle-check' : (scope.row.submitting ? 'loading' : '')"
+              :type="scope.row.newSort === undefined ? 'danger' : (scope.row.sort === scope.row.newSort ? 'success' : 'primary')"
+              :icon="scope.row.newSort === undefined ? 'circle-close' : (scope.row.sort === scope.row.newSort ? 'circle-check' : (scope.row.submitting ? 'loading' : ''))"
+              :disabled="scope.row.newSort === undefined"
               @click="submit([{ id: scope.row.id, uid: scope.row.uid, sort: scope.row.newSort }])"
             >{{ scope.row.sort === scope.row.newSort ? '' : '确认' }}</el-button>
           </template>
@@ -54,6 +56,7 @@
       <el-button type="primary" class="submit-btn" @click="submit()"
         :type="allSuccess ? 'success' : 'primary'"
         :icon="hasSubmitting ? 'loading' : (allSuccess ? 'circle-check' : '')"
+        :disabled="hasSubmitable"
       >全部确认</el-button>
     </div>
   </div>
@@ -77,14 +80,18 @@ export default {
     hasSubmitting() {
       return this.goods.length !== 0 && this.goods.filter(c => !c.submitting).length === 0;
     },
+    hasSubmitable() {
+      return this.goods.filter(c => c.newSort !== undefined).length === 0;
+    },
   },
   methods: {
     ...mapActions('csort', {
       csortQuery: 'CSORT_QUERY',
       submitSort: 'CSORT_SUBMIT',
     }),
-    startQuery() {
+    startQuery(local) {
       this.csortQuery({
+        local,
         ids: this.goodsIds.split('\n'),
         sorts: this.sortVals.split('\n'),
       });

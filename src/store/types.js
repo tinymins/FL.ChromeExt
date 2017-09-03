@@ -18,6 +18,6 @@ export const USER = exportVar('USER',
   'GET', 'DEBUG', 'LOGIN', 'LOGOUT',
 );
 export const CSORT = exportVar('CSORT',
-  'QUERY', 'QUERY_CLEAR', 'QUERY_SUCCESS',
+  'QUERY', 'QUERY_SUCCESS', 'QUERY_UPDATE',
   'SUBMIT', 'SUBMIT_SUCCESS', 'SUBMIT_FAILURE',
 );
