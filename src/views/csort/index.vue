@@ -6,15 +6,25 @@
         type="textarea"
         :autosize="{ minRows: 5, maxRows: 20}"
         placeholder="请输入商品ID列表 每行一个"
-        v-model="goodsIds">
+        v-model="goodsIdsS">
       </el-input>
       <el-input
         class="textarea"
         type="textarea"
         :autosize="{ minRows: 5, maxRows: 20}"
         placeholder="超级排序列表 与左侧按行对应 连续相同用空格隔开 如 “100 3” 表示连续三个 100"
-        v-model="sortVals">
+        v-model="sortValsS">
       </el-input>
+    </div>
+    <div class="query">
+      <el-alert
+        class="query-mismatch-alert"
+        title="注意：商品列表与超级排序数量不匹配！"
+        type="warning"
+        show-icon
+        :closable="false"
+        v-show="goodsIds.length !== sortVals.length">
+      </el-alert>
     </div>
     <div class="query">
       <el-button type="primary" class="query-btn" @click="startQuery(false)">查询商品列表</el-button>
@@ -63,7 +73,7 @@
 </template>
 <script>
 import { mapActions, mapState } from 'vuex';
-import { Input, Button, Table, TableColumn } from 'element-ui';
+import { Input, Button, Table, TableColumn, Alert } from 'element-ui';
 
 export default {
   components: {
@@ -71,6 +81,7 @@ export default {
     [Button.name]: Button,
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,
+    [Alert.name]: Alert,
   },
   computed: {
     ...mapState('csort', ['goods', 'submitting']),
@@ -83,6 +94,25 @@ export default {
     hasSubmitable() {
       return this.goods.filter(c => c.newSort !== undefined).length === 0;
     },
+    goodsIds() {
+      return this.goodsIdsS.split('\n').filter(c => c.replace(/\s+/).length !== 0);
+    },
+    sortVals() {
+      const sorts = this.sortValsS.split('\n').filter(c => c.replace(/\s+/).length !== 0);
+      const realSorts = [];
+      const re = /(\d+)\s+(\d+)/;
+      sorts.forEach((s) => {
+        const r = re.exec(s);
+        if (r) {
+          for (let index = 0; index < r[2]; index += 1) {
+            realSorts.push(r[1].toString());
+          }
+        } else {
+          realSorts.push(s);
+        }
+      });
+      return realSorts;
+    },
   },
   methods: {
     ...mapActions('csort', {
@@ -92,8 +122,8 @@ export default {
     startQuery(local) {
       this.csortQuery({
         local,
-        ids: this.goodsIds.split('\n'),
-        sorts: this.sortVals.split('\n'),
+        ids: this.goodsIds,
+        sorts: this.sortVals,
       });
     },
     submit(values) {
@@ -113,8 +143,8 @@ export default {
   },
   data() {
     return {
-      goodsIds: '',
-      sortVals: '',
+      goodsIdsS: '',
+      sortValsS: '',
     };
   },
 };

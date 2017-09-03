@@ -2,7 +2,7 @@
  * @Author: Zhai Yiming (root@derzh.com)
  * @Date:   2017-08-23 12:57:02
  * @Last Modified by:   Zhai Yiming
- * @Last Modified time: 2017-09-02 20:28:34
+ * @Last Modified time: 2017-09-03 16:05:09
  */
 .query {
   display: flex;
@@ -11,6 +11,9 @@
   }
   &-btn {
     flex: 1;
+  }
+  &-mismatch-alert {
+    margin-bottom: 10px;
   }
 }
 

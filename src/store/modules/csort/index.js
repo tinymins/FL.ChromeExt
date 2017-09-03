@@ -2,7 +2,7 @@
  * @Author: Zhai Yiming (root@derzh.com)
  * @Date:   2017-09-02 17:45:27
  * @Last Modified by:   Zhai Yiming
- * @Last Modified time: 2017-09-03 15:48:55
+ * @Last Modified time: 2017-09-03 16:00:49
  */
 /* eslint no-param-reassign: ["error", { "props": false }] */
 
@@ -19,23 +19,10 @@ export default {
   getters: {},
   actions: {
     [CSORT.QUERY]({ commit, state }, { ids, sorts, local = false }) {
-      const promises = [];
-      const realSorts = [];
-      const re = /(\d+)\s+(\d+)/;
-      sorts.forEach((s) => {
-        const r = re.exec(s);
-        if (r) {
-          for (let index = 0; index < r[2]; index += 1) {
-            realSorts.push(r[1].toString());
-          }
-        } else {
-          realSorts.push(s);
-        }
-      });
       commit(CSORT.QUERY, ids);
       const list = ids.map((id, index) => ({
         id,
-        sort: realSorts[index],
+        sort: sorts[index],
       }));
       const hasRequest = local ? 0 : list.filter(
         p => state.goods.filter(c => c.id === p.id).length === 0,
