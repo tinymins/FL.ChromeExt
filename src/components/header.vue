@@ -26,9 +26,13 @@
       [Menu.name]: Menu,
       [MenuItem.name]: MenuItem,
     },
+    asyncData({ store }) {
+      return store.dispatch('user/USER_GET');
+    },
     methods: {},
     data() {
       const tabList = [
+        { name: '用户中心', route: 'user' },
         { name: '超级排序', route: 'csort' },
       ];
       return {

@@ -6,6 +6,7 @@ import { isDevelop, setWechatTitle, isInWechat } from '@/utils/util';
 import indexRoute from '@/router/basic/index';
 import popupRoute from '@/router/basic/popup';
 import csortRoute from '@/router/basic/csort';
+import userRoute from '@/router/basic/user';
 import ProgressBar from '@/components/progressbar';
 import { WECHAT_LOGIN_URL } from '@/config';
 
@@ -17,7 +18,7 @@ Vue.prototype.$bar = bar;
 
 Vue.use(VueRouter);
 const routes = [].concat(
-  popupRoute, csortRoute,
+  popupRoute, csortRoute, userRoute,
   indexRoute,
 );
 
@@ -61,7 +62,7 @@ router.beforeEach(async (to, from, next) => {
   const requiresGuest = to.matched.some(record => record.meta.requiresGuest);
   const requiresDevelop = to.matched.some(record => record.meta.requiresDevelop);
   let params;
-  const user = await getAuthorization();
+  const user = (requiresAuth || requiresGuest) ? await getAuthorization() : null;
   if (requiresDevelop && !isDevelop()) {
     params = { name: 'index' };
   } else if (!user && requiresAuth) {
@@ -70,7 +71,7 @@ router.beforeEach(async (to, from, next) => {
     } else if (isDevelop()) {
       params = { name: 'user_login_dev', query: { redirect: to.fullPath } };
     } else {
-      params = { name: 'user_login', query: { redirect: to.fullPath } };
+      params = { name: 'user_login_index', query: { redirect: to.fullPath } };
     }
   } else if (user && requiresGuest) {
     params = { name: 'user' };

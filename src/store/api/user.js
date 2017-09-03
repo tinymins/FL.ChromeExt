@@ -6,7 +6,7 @@
 */
 
 import { http } from '@/store/api';
-import { popupWindow } from '@/utils/util';
 
-export const login = () => popupWindow('http://trace.51fanli.com/index.php');
-export const getState = () => http.get('http://trace.51fanli.com/index.php/Public/profile/');
+export const login = (account, password) => http.postForm('Public/checkLogin/', { account, password, ajax: 1 });
+export const logout = () => http.get('Public/logout/');
+export const getUser = () => http.get('Public/profile/');

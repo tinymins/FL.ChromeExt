@@ -24,9 +24,31 @@ export default {
     },
   },
   actions: {
+    [USER.LOGIN]({ commit }, { account, password }) {
+      return new Promise((resolve, reject) => {
+        api.login(account, password).then((res) => {
+          if (res.data.status === 1) {
+            commit(USER.GET, null);
+            resolve();
+          } else {
+            reject(res.data.info);
+          }
+        }).catch((err) => {
+          reject(err.message);
+        });
+      });
+    },
+    [USER.LOGOUT]({ commit }) {
+      return new Promise((resolve, reject) => {
+        api.logout().then(() => {
+          commit(USER.LOGOUT);
+          resolve();
+        }).catch(reject);
+      });
+    },
     [USER.GET]({ commit, state }, force) {
       if (force || !state.user) {
-        return api.getState().then((res) => {
+        return api.getUser().then((res) => {
           const re = /nickname" value="([^"]+)"/gui;
           const r = re.exec(res.data);
           if (r) {
