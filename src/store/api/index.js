@@ -6,10 +6,11 @@
 */
 /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
 
+import qs from 'qs';
 import axios from 'axios';
 import { isDevelop } from '@/utils/util';
 
-export const API_HOST = isDevelop() ? 'https://dev.haimanchajian.com/api' : '/api';
+export const API_HOST = 'http://trace.51fanli.com/index.php/';
 
 let indicatorCount = 0;
 let Indicator = () => { console.warn('Indicator has not been loaded yet!'); };
@@ -83,6 +84,6 @@ export const http = axios.create({
   withCredentials: true,
   timeout: !isDevelop() && 10000,
 });
-
+http.postForm = (url, data) => http.post(url, qs.stringify(data));
 http.interceptors.request.use(onRequest, onRequestError);
 http.interceptors.response.use(onResponse, onResponseError);
