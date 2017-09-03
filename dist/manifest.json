@@ -1,9 +1,9 @@
 ﻿{
   "manifest_version": 2,
 
-  "name": "FL Auto",
-  "description": "让FL网页更好用让FL网页更好用",
-  "version": "0.0.1",
+  "name": "FL Opt",
+  "description": "让FL后台网页更好用",
+  "version": "0.0.2",
   "browser_action": {
     "default_popup": "index.html#/popup",
     "default_title": "__MSG_exttitle__"
