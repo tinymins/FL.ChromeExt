@@ -4,7 +4,7 @@
 * @Last Modified by:   Administrator
 * @Last Modified time: 2017-05-04 11:45:04
 */
-/* eslint no-console: ["error", { allow: ["warn", "error"] }] */
+/* eslint no-console: ["warn", { allow: ["warn", "error"] }] */
 
 import qs from 'qs';
 import axios from 'axios';
@@ -14,7 +14,7 @@ export const API_HOST = 'http://trace.51fanli.com/index.php/';
 
 let Indicator = () => { console.warn('Indicator has not been loaded yet!'); };
 let MessageBox = () => { console.warn('MessageBox has not been loaded yet!'); };
-const getLoadingText = url => `正在拼命连接 ${url.replace(/.*:\/\//, '').replace(/\/.*/, '')}`;
+const getLoadingText = config => `正在拼命连接 ${config.url.replace(/.*:\/\//, '').replace(/\/.*/, '')}${config.loadingText ? ` | ${config.loadingText}` : ''}`;
 
 import('element-ui/lib/loading').then(({ default: Loading }) => {
   let texts = [];
@@ -57,7 +57,7 @@ export const onRequest = (req) => {
   if (req.interceptors !== false) {
     req.interceptors = true;
   }
-  Indicator.open(`auto indicator # ${req.url}`, getLoadingText(req.url));
+  Indicator.open(`auto indicator # ${req.url}`, getLoadingText(req));
   return req;
 };
 

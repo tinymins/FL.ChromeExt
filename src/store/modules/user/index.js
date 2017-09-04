@@ -7,7 +7,6 @@
 /* eslint no-param-reassign: ["error", { "props": false }] */
 
 import * as api from '@/store/api/user';
-import { openIndicator, closeIndicator } from '@/store/api';
 import { USER } from '@/store/types';
 
 
@@ -27,7 +26,7 @@ export default {
   actions: {
     [USER.LOGIN]({ commit }, { account, password }) {
       return new Promise((resolve, reject) => {
-        api.login(account, password).then((res) => {
+        api.login([account, password], '努力登录中').then((res) => {
           if (res.data.status === 1) {
             commit(USER.GET, null);
             resolve();
@@ -41,7 +40,7 @@ export default {
     },
     [USER.LOGOUT]({ commit }) {
       return new Promise((resolve, reject) => {
-        api.logout().then(() => {
+        api.logout('努力退出登录').then(() => {
           commit(USER.LOGOUT);
           resolve();
         }).catch(reject);
@@ -49,9 +48,7 @@ export default {
     },
     [USER.GET]({ commit, state }, force) {
       if (force || !state.user) {
-        openIndicator('get user', '获取当前登录状态');
-        return api.getUser().then((res) => {
-          closeIndicator('get user');
+        return api.getUser('获取当前登录状态').then((res) => {
           const re = /nickname" value="([^"]+)"/gui;
           const r = re.exec(res.data);
           if (r) {
@@ -60,7 +57,6 @@ export default {
             commit(USER.LOGOUT);
           }
         }).catch(() => {
-          closeIndicator('get user');
           commit(USER.LOGOUT);
         });
       }

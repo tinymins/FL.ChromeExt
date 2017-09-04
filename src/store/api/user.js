@@ -7,6 +7,6 @@
 
 import { http } from '@/store/api';
 
-export const login = (account, password) => http.postForm('Public/checkLogin/', { account, password, ajax: 1 });
-export const logout = () => http.get('Public/logout/');
-export const getUser = () => http.get('Public/profile/');
+export const login = ([account, password], loadingText) => http.postForm('Public/checkLogin/', { account, password, ajax: 1 }, { loadingText });
+export const logout = loadingText => http.get('Public/logout/', { loadingText });
+export const getUser = loadingText => http.get('Public/profile/', { loadingText });
