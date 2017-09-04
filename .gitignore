@@ -2,8 +2,9 @@
 node_modules/
 dist.crx
 dist.pem
+dist/static/
 dist/dist.zip
 dist/index.html
 dist/favicon.ico
-dist/static/
+dist/Archive.zip
 npm-debug.log*

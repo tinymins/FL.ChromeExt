@@ -2,7 +2,7 @@
  * @Author: Zhai Yiming (root@derzh.com)
  * @Date:   2017-09-02 17:45:27
  * @Last Modified by:   Zhai Yiming
- * @Last Modified time: 2017-09-03 16:47:28
+ * @Last Modified time: 2017-09-04 10:43:27
  */
 /* eslint no-param-reassign: ["error", { "props": false }] */
 
@@ -41,10 +41,13 @@ export default {
           }
           const p = list.shift();
           if (hasRequest && state.goods.filter(c => c.id === p.id).length === 0) {
+            openIndicator(`csort loading ${p.id}`, `加载商品 ${p.id}`);
             api.queryList(p.id).then((res) => {
+              closeIndicator(`csort loading ${p.id}`);
               commit(CSORT.QUERY_SUCCESS, { p, html: res.data });
               next();
             }).catch(() => {
+              closeIndicator(`csort loading ${p.id}`);
               next();
             });
           } else {
@@ -69,7 +72,9 @@ export default {
             return;
           }
           const p = list.shift();
+          openIndicator(`csort submitting ${p.id}`, `修改商品 [${p.name}](${p.id}) 超级排序为 ${p.newSort}`);
           api.submit(p.uid, p.newSort).then((res) => {
+            closeIndicator(`csort submitting ${p.id}`);
             if (res.data.status === 1) {
               commit(CSORT.SUBMIT_SUCCESS, p);
               next();
@@ -78,6 +83,7 @@ export default {
               next();
             }
           }).catch(() => {
+            closeIndicator(`csort submitting ${p.id}`);
             commit(CSORT.SUBMIT_FAILURE, p);
             next();
           });

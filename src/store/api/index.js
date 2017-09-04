@@ -12,26 +12,31 @@ import { isDevelop } from '@/utils/util';
 
 export const API_HOST = 'http://trace.51fanli.com/index.php/';
 
-let indicatorCount = 0;
 let Indicator = () => { console.warn('Indicator has not been loaded yet!'); };
 let MessageBox = () => { console.warn('MessageBox has not been loaded yet!'); };
+const getLoadingText = url => `正在拼命连接 ${url.replace(/.*:\/\//, '').replace(/\/.*/, '')}`;
 
 import('element-ui/lib/loading').then(({ default: Loading }) => {
+  let texts = [];
   Indicator = {
-    open: () => {
-      indicatorCount += 1;
+    open: (id, text) => {
+      texts.push({ id, text });
       if (this.indicator) {
+        this.indicator.text = texts.map(c => c.text).filter(_ => _).join(' | ');
         return;
       }
-      this.indicator = Loading.service({ fullscreen: true });
+      this.indicator = Loading.service({ fullscreen: true, text });
     },
-    close: () => {
-      indicatorCount -= 1;
-      if (!this.indicator || indicatorCount) {
-        return;
+    close: (id) => {
+      if (id) {
+        texts = texts.filter(c => c.id !== id);
+      } else {
+        texts.pop();
       }
-      this.indicator.close();
-      this.indicator = null;
+      if (this.indicator && texts.length === 0) {
+        this.indicator.close();
+        this.indicator = null;
+      }
     },
   };
 });
@@ -52,19 +57,19 @@ export const onRequest = (req) => {
   if (req.interceptors !== false) {
     req.interceptors = true;
   }
-  Indicator.open();
+  Indicator.open(`auto indicator # ${req.url}`, getLoadingText(req.url));
   return req;
 };
 
 export const onRequestError = error => Promise.reject(error);
 
 export const onResponse = (res) => {
-  Indicator.close();
+  Indicator.close(`auto indicator # ${res.config.url}`);
   return Promise.resolve(res);
 };
 
 export const onResponseError = (error) => {
-  Indicator.close();
+  Indicator.close(`auto indicator # ${error.config.url}`);
   if (!error.response) {
     MessageBox(error.message, error.stack);
   } else if (error.response.status === 401) {
@@ -79,8 +84,8 @@ export const onResponseError = (error) => {
   return Promise.reject(error);
 };
 
-export const openIndicator = () => { Indicator.open(); };
-export const closeIndicator = () => { Indicator.close(); };
+export const openIndicator = (...params) => { Indicator.open(...params); };
+export const closeIndicator = (...params) => { Indicator.close(...params); };
 
 export const http = axios.create({
   baseURL: API_HOST,

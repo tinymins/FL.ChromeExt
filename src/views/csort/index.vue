@@ -19,7 +19,7 @@
     <div class="query">
       <el-alert
         class="query-mismatch-alert"
-        title="注意：商品列表与超级排序数量不匹配！"
+        :title="`注意：商品列表数量(${goodsIds.length})与超级排序数量(${sortVals.length})不匹配！`"
         type="warning"
         show-icon
         :closable="false"
