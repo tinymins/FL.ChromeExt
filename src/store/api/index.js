@@ -17,26 +17,27 @@ let MessageBox = () => { console.warn('MessageBox has not been loaded yet!'); };
 const getLoadingText = config => `正在拼命连接 ${config.url.replace(/.*:\/\//, '').replace(/\/.*/, '')}${config.loadingText ? ` | ${config.loadingText}` : ''}`;
 
 import('element-ui/lib/loading').then(({ default: Loading }) => {
-  let texts = [];
+  let stack = [];
   Indicator = {
     open: (id, text) => {
-      texts.push({ id, text });
+      stack.push({ id, text });
       if (this.indicator) {
-        this.indicator.text = texts.map(c => c.text).filter(_ => _).join(' | ');
+        this.indicator.text = stack.map(c => c.text).filter(_ => _).join(' | ');
         return;
       }
       this.indicator = Loading.service({ fullscreen: true, text });
     },
     close: (id) => {
       if (id) {
-        texts = texts.filter(c => c.id !== id);
+        stack = stack.filter(c => c.id !== id);
       } else {
-        texts.pop();
+        stack.pop();
       }
-      if (this.indicator && texts.length === 0) {
-        this.indicator.close();
-        this.indicator = null;
+      if (!this.indicator || stack.length !== 0) {
+        return;
       }
+      this.indicator.close();
+      this.indicator = null;
     },
   };
 });
@@ -57,19 +58,19 @@ export const onRequest = (req) => {
   if (req.interceptors !== false) {
     req.interceptors = true;
   }
-  Indicator.open(`auto indicator # ${req.url}`, getLoadingText(req));
+  Indicator.open(req, getLoadingText(req));
   return req;
 };
 
 export const onRequestError = error => Promise.reject(error);
 
 export const onResponse = (res) => {
-  Indicator.close(`auto indicator # ${res.config.url}`);
+  Indicator.close(res.config);
   return Promise.resolve(res);
 };
 
 export const onResponseError = (error) => {
-  Indicator.close(`auto indicator # ${error.config.url}`);
+  Indicator.close(error.config);
   if (!error.response) {
     MessageBox(error.message, error.stack);
   } else if (error.response.status === 401) {
@@ -93,6 +94,6 @@ export const http = axios.create({
   timeout: !isDevelop() && 10000,
 });
 
-http.postForm = (url, data) => http.post(url, qs.stringify(data));
+http.postForm = (url, data, ...params) => http.post(url, qs.stringify(data), ...params);
 http.interceptors.request.use(onRequest, onRequestError);
 http.interceptors.response.use(onResponse, onResponseError);
