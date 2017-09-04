@@ -26,7 +26,10 @@ export default {
   actions: {
     [USER.LOGIN]({ commit }, { account, password }) {
       return new Promise((resolve, reject) => {
-        api.login([account, password], '努力登录中').then((res) => {
+        api.login(
+          '努力登录中',
+          account, password,
+        ).then((res) => {
           if (res.data.status === 1) {
             commit(USER.GET, null);
             resolve();

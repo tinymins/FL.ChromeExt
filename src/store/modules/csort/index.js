@@ -2,7 +2,7 @@
  * @Author: Zhai Yiming (root@derzh.com)
  * @Date:   2017-09-02 17:45:27
  * @Last Modified by:   Zhai Yiming
- * @Last Modified time: 2017-09-04 11:08:27
+ * @Last Modified time: 2017-09-04 11:35:50
  */
 /* eslint no-param-reassign: ["error", { "props": false }] */
 
@@ -41,7 +41,10 @@ export default {
           }
           const p = list.shift();
           if (hasRequest && state.goods.filter(c => c.id === p.id).length === 0) {
-            api.queryList([p.id], `加载商品 ${p.id}`).then((res) => {
+            api.queryList(
+              `加载商品 ${p.id}`,
+              p.id,
+            ).then((res) => {
               commit(CSORT.QUERY_SUCCESS, { p, html: res.data });
               next();
             }).catch(() => {
@@ -69,7 +72,10 @@ export default {
             return;
           }
           const p = list.shift();
-          api.submit([p.uid, p.newSort], `修改商品 [${p.name}](${p.id}) 超级排序为 ${p.newSort}`).then((res) => {
+          api.submit(
+            `修改商品 [${p.name}](${p.id}) 超级排序为 ${p.newSort}`,
+            p.uid, p.newSort,
+          ).then((res) => {
             if (res.data.status === 1) {
               commit(CSORT.SUBMIT_SUCCESS, p);
               next();
