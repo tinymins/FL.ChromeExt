@@ -8,6 +8,7 @@ import 'normalize.css';
 import router from '@/router';
 import { store } from '@/store';
 import { isOnDemandComponents } from '@/config';
+import '../static/js/flexible';
 
 Vue.config.productionTip = false;
 
