@@ -14,6 +14,7 @@ import { isDevelop } from '@/utils/util';
 // import * as mutations from '@/store/mutations';
 import userModule from '@/store/modules/user';
 import csortModule from '@/store/modules/csort';
+import tsellModule from '@/store/modules/tsell';
 
 Vue.use(Vuex);
 export const store = new Vuex.Store({
@@ -26,6 +27,7 @@ export const store = new Vuex.Store({
 
 store.registerModule('user', userModule);
 store.registerModule('csort', csortModule);
+store.registerModule('tsell', tsellModule);
 
 export const clearAuthorization = () => {
   store.dispatch('user/USER_CLEAR');
@@ -37,4 +39,3 @@ export const getAuthorization = async () => {
   }
   return store.getters['user/user'];
 };
-

@@ -1,6 +1,7 @@
 <template>
   <div class="menu">
     <el-button type="primary" class="menu-item" @click="popupCsort">超级排序</el-button>
+    <el-button type="primary" class="menu-item" @click="popupTsell">实时榜单</el-button>
   </div>
 </template>
 <script>
@@ -14,6 +15,9 @@ export default {
   methods: {
     popupCsort() {
       popupWindow('index.html#/csort', true);
+    },
+    popupTsell() {
+      popupWindow('index.html#/tsell', true);
     },
   },
 };

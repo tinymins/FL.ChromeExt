@@ -2,7 +2,7 @@
  * @Author: Zhai Yiming (root@derzh.com)
  * @Date:   2017-11-01 13:44:21
  * @Last Modified by:   Emine Zhai (root@derzh.com)
- * @Last Modified time: 2018-05-05 15:42:46
+ * @Last Modified time: 2018-05-05 15:42:56
  */
 /* eslint no-return-assign: "off" */
 /* eslint no-param-reassign: ["error", { "props": false }] */
@@ -17,6 +17,7 @@ import { isDevelop, setWechatTitle, isInWechat } from '@/utils/util';
 import indexRoute from '@/router/basic/index';
 import popupRoute from '@/router/basic/popup';
 import csortRoute from '@/router/basic/csort';
+import tsellRoute from '@/router/basic/tsell';
 import userRoute from '@/router/basic/user';
 import ProgressBar from '@/components/progressbar';
 import { WECHAT_LOGIN_URL } from '@/config';
@@ -29,7 +30,7 @@ Vue.prototype.$bar = bar;
 
 Vue.use(VueRouter);
 const routes = [].concat(
-  popupRoute, csortRoute, userRoute,
+  popupRoute, csortRoute, tsellRoute, userRoute,
   indexRoute,
 );
 

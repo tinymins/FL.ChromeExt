@@ -4,6 +4,7 @@
 * @Last Modified by:   Administrator
 * @Last Modified time: 2017-05-04 12:05:57
 */
+/* eslint function-paren-newline: "off" */
 
 const exportVar = (enumerate, ...args) => {
   const data = {};
@@ -20,4 +21,8 @@ export const USER = exportVar('USER',
 export const CSORT = exportVar('CSORT',
   'QUERY', 'QUERY_SUCCESS', 'QUERY_UPDATE',
   'SUBMIT', 'SUBMIT_SUCCESS', 'SUBMIT_FAILURE',
+);
+export const TSELL = exportVar('TSELL',
+  'QUERY_LIST', 'QUERY_LIST_SUCCESS',
+  'QUERY_ITEMS', 'QUERY_ITEM_SUCCESS',
 );

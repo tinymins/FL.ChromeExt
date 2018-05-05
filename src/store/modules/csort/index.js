@@ -1,8 +1,8 @@
 /**
  * @Author: Zhai Yiming (root@derzh.com)
  * @Date:   2017-09-02 17:45:27
- * @Last Modified by:   Zhai Yiming
- * @Last Modified time: 2017-09-04 11:35:50
+ * @Last Modified by:   Emine Zhai (root@derzh.com)
+ * @Last Modified time: 2018-05-05 17:46:12
  */
 /* eslint no-param-reassign: ["error", { "props": false }] */
 
@@ -58,7 +58,7 @@ export default {
         next();
       });
     },
-    [CSORT.SUBMIT]({ commit, state }, orilist) {
+    [CSORT.SUBMIT]({ commit }, orilist) {
       const list = orilist.filter(p => p.newSort !== undefined && p.newSort !== p.sort);
       if (list.length === 0) {
         return Promise.resolve();

@@ -1,0 +1,28 @@
+/**
+ * @Author: Zhai Yiming (root@derzh.com)
+ * @Date:   2017-08-23 12:57:02
+ * @Last Modified by:   Zhai Yiming
+ * @Last Modified time: 2017-09-03 16:05:09
+ */
+
+.query {
+  margin: 0;
+  display: flex;
+  margin-top: 20px;
+
+  &:last-child {
+    margin-bottom: 20px;
+  }
+
+  &-btn {
+    flex: 1;
+  }
+}
+
+.list {
+  margin-top: 20px;
+
+  &:last-child {
+    margin-bottom: 20px;
+  }
+}
