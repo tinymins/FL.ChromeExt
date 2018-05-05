@@ -2,8 +2,8 @@
   <div>
     <div class="query">
       <el-button type="primary" class="query-btn" @click="queryList">刷新列表</el-button>
-      <el-button type="primary" class="query-btn" @click="queryItems({ reload: false })">获取缺失的详细数据</el-button>
-      <el-button type="primary" class="query-btn" @click="queryItems({ reload: true })">获取全部详细数据</el-button>
+      <el-button type="primary" class="query-btn" @click="queryItems({ reload: false })">增量获取详细数据</el-button>
+      <el-button type="primary" class="query-btn" @click="queryItems({ reload: true })">刷新全部详细数据</el-button>
     </div>
     <div class="list">
       <el-table class="list-table" :data="goods">
