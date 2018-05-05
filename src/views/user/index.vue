@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <el-button @click="logout" type="primary">登出</el-button>
+    <el-button type="primary" @click="logout">登出</el-button>
   </div>
 </template>
 <script>

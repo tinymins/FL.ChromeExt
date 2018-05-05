@@ -18,13 +18,13 @@
     </div>
     <div class="query">
       <el-alert
+        v-show="goodsIds.length !== sortVals.length"
         class="query-mismatch-alert"
         :title="`注意：商品列表数量(${goodsIds.length})与超级排序数量(${sortVals.length})不匹配！`"
         type="warning"
         show-icon
         :closable="false"
-        v-show="goodsIds.length !== sortVals.length">
-      </el-alert>
+      ></el-alert>
     </div>
     <div class="query">
       <el-button type="primary" class="query-btn" @click="startQuery(false)">查询商品列表</el-button>
@@ -33,8 +33,8 @@
     <div class="list">
       <el-table :data="goods" class="list-table">
         <el-table-column label="图片" width="80">
-          <template scope="scope">
-            <img :src="scope.row.image" style="max-width: 50px; max-height: 50px;"></img>
+          <template slot-scope="scope">
+            <img :src="scope.row.image" style="max-width: 50px; max-height: 50px;">
           </template>
         </el-table-column>
         <el-table-column prop="uid" label="ID" width="100">
@@ -42,7 +42,7 @@
         <el-table-column prop="id" label="商品ID" width="180">
         </el-table-column>
         <el-table-column label="商品名称">
-          <template scope="scope">
+          <template slot-scope="scope">
             <a :href="scope.row.url" style="color: #2AB3DE;" target="__blank">{{ scope.row.name }}</a>
           </template>
         </el-table-column>
@@ -51,10 +51,10 @@
         <el-table-column prop="newSort" label="目标超级排序" width="80">
         </el-table-column>
         <el-table-column label="操作" width="110">
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-button
               :type="scope.row.newSort === undefined ? 'danger' : (scope.row.sort === scope.row.newSort ? 'success' : 'primary')"
-              :icon="scope.row.newSort === undefined ? 'circle-close' : (scope.row.sort === scope.row.newSort ? 'circle-check' : (scope.row.submitting ? 'loading' : ''))"
+              :icon="getRowIcon(scope.row)"
               :disabled="scope.row.newSort === undefined"
               @click="submit([scope.row])"
             >{{ scope.row.sort === scope.row.newSort ? '完成' : '确认' }}</el-button>
@@ -63,10 +63,12 @@
       </el-table>
     </div>
     <div class="submit">
-      <el-button type="primary" class="submit-btn" @click="submit()"
+      <el-button
+        class="submit-btn"
         :type="allSuccess ? 'success' : 'primary'"
         :icon="hasSubmitting ? 'loading' : (allSuccess ? 'circle-check' : '')"
         :disabled="hasSubmitable"
+        @click="submit()"
       >{{ allSuccess ? '全部完成' : '全部确认' }}</el-button>
     </div>
   </div>
@@ -82,6 +84,12 @@ export default {
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,
     [Alert.name]: Alert,
+  },
+  data() {
+    return {
+      goodsIdsS: '',
+      sortValsS: '',
+    };
   },
   computed: {
     ...mapState('csort', ['goods', 'submitting']),
@@ -119,6 +127,15 @@ export default {
       csortQuery: 'CSORT_QUERY',
       submitSort: 'CSORT_SUBMIT',
     }),
+    getRowIcon(row) {
+      if (row.newSort === undefined) {
+        return 'circle-close';
+      }
+      if (row.sort === row.newSort) {
+        return 'circle-check';
+      }
+      return row.submitting ? 'loading' : '';
+    },
     startQuery(local) {
       this.csortQuery({
         local,
@@ -133,12 +150,6 @@ export default {
       }
       this.submitSort(list);
     },
-  },
-  data() {
-    return {
-      goodsIdsS: '',
-      sortValsS: '',
-    };
   },
 };
 </script>

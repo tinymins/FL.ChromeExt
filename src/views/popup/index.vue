@@ -1,6 +1,6 @@
 <template>
   <div class="menu">
-    <el-button @click="popupCsort" type="primary" class="menu-item">超级排序</el-button>
+    <el-button type="primary" class="menu-item" @click="popupCsort">超级排序</el-button>
   </div>
 </template>
 <script>

@@ -1,4 +1,15 @@
+/**
+ * @Author: Zhai Yiming (root@derzh.com)
+ * @Date:   2017-11-01 13:44:21
+ * @Last Modified by:   Emine Zhai (root@derzh.com)
+ * @Last Modified time: 2018-05-05 15:42:46
+ */
+/* eslint no-return-assign: "off" */
+/* eslint no-param-reassign: ["error", { "props": false }] */
+/* eslint no-console: ["warn", { allow: ["warn", "error"] }] */
+
 import Vue from 'vue';
+
 import VueRouter from 'vue-router';
 import { store, getAuthorization } from '@/store';
 import { isDevelop, setWechatTitle, isInWechat } from '@/utils/util';
