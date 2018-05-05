@@ -1,7 +1,8 @@
 <template>
   <div>
     <div class="query">
-      <el-button type="primary" class="query-btn" @click="queryList">刷新列表</el-button>
+      <el-input v-model="url" type="text" placeholder="请输入页面地址"></el-input>
+      <el-button type="primary" class="query-btn" @click="queryList({ url })">刷新列表</el-button>
       <el-button type="primary" class="query-btn" @click="queryItems({ reload: false })">增量获取详细数据</el-button>
       <el-button type="primary" class="query-btn" @click="queryItems({ reload: true })">刷新全部详细数据</el-button>
     </div>
@@ -33,8 +34,7 @@ export default {
   },
   data() {
     return {
-      goodsIdsS: '',
-      sortValsS: '',
+      url: 'http://www.dataoke.com/top_sell',
     };
   },
   computed: {

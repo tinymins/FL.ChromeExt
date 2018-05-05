@@ -7,5 +7,5 @@
 
 import { http } from '@/store/api';
 
-export const queryList = loadingText => http.get('http://www.dataoke.com/top_sell', { loadingText });
+export const queryList = (loadingText, url) => http.get(url, { loadingText });
 export const queryItem = (loadingText, id) => http.get('http://www.dataoke.com/gettpl', { loadingText, params: { gid: id, _: (new Date()).valueOf() } });

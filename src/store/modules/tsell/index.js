@@ -2,7 +2,7 @@
  * @Author: Zhai Yiming (root@derzh.com)
  * @Date:   2017-09-02 17:45:27
  * @Last Modified by:   Emine Zhai (root@derzh.com)
- * @Last Modified time: 2018-05-05 17:43:14
+ * @Last Modified time: 2018-05-05 19:21:48
  */
 /* eslint no-param-reassign: ["error", { "props": false }] */
 
@@ -13,6 +13,7 @@ import { TSELL } from '@/store/types';
 export default {
   namespaced: true,
   state: {
+    url: '',
     html: null,
     htmls: [],
     goods: [],
@@ -26,8 +27,11 @@ export default {
       if (params.reload) {
         commit(TSELL.QUERY_LIST);
         return new Promise((resolve, reject) => {
-          api.queryList().then((res) => {
-            commit(TSELL.QUERY_LIST_SUCCESS, { html: res.data });
+          api.queryList(`正在从 ${params.url} 中获取数据`, params.url).then((res) => {
+            commit(TSELL.QUERY_LIST_SUCCESS, {
+              url: params.url,
+              html: res.data,
+            });
             resolve();
           }).catch(reject);
         });
@@ -62,26 +66,48 @@ export default {
   },
   mutations: {
     [TSELL.QUERY_LIST](state) {
+      state.url = '';
+      state.html = '';
       state.goods = [];
       state.htmls = [];
     },
-    [TSELL.QUERY_LIST_SUCCESS](state, { html }) {
-      const re = /<div id="goods-items_([\d.]+)"[\s\S]*?<a href="\/item\?id=\1" target="_blank">\s*([\s\S]*?)\s*<\/a>[\s\S]*?<\/i>([\d.]+)<\/b><\/p><span>券后价<\/span>[\s\S]*?<\/i>([\d.]+)<\/b><\/p><span>优惠券<\/span>[\s\S]*?<p>([\d.]+)<b>%<\/b><\/p><span>\s*([^<]+?)\s*<\/span>/gi;
-      let r = re.exec(html);
-      while (r) {
-        state.goods.push({
-          id: r[1],
-          uid: '',
-          name: r[2],
-          finalPrice: r[3],
-          discount: r[4],
-          planNum: r[5],
-          planType: r[6],
-          url: '',
-          discountUrl: '',
-        });
-        r = re.exec(html);
+    [TSELL.QUERY_LIST_SUCCESS](state, { url, html }) {
+      if (url.indexOf('www.dataoke.com/qlist') > 0) {
+        const re = /<div id="goods-items_([\d.]+)"[\s\S]*?<a href="\/item\?id=\1" target="_blank"><!--remove the class="quan_title" attribute for this "a" tag-->\s*([\s\S]*?)\s*<\/a>[\s\S]*?<span>券后价<\/span>[\s\S]*?<\/i>([\d.]+)<\/b>[\s\S]*?<span>\s*([^<]*?)\s*<\/span><p>([\d.]+)<b>[\s\S]*?<p>券[\s\S]*?<\/i>([\d.]+)<\/b>/gi;
+        let r = re.exec(html);
+        while (r) {
+          state.goods.push({
+            id: r[1],
+            uid: '',
+            name: r[2],
+            finalPrice: r[3],
+            discount: r[6],
+            planNum: r[5],
+            planType: r[4],
+            url: '',
+            discountUrl: '',
+          });
+          r = re.exec(html);
+        }
+      } else {
+        const re = /<div id="goods-items_([\d.]+)"[\s\S]*?<a href="\/item\?id=\1" target="_blank">\s*([\s\S]*?)\s*<\/a>[\s\S]*?<\/i>([\d.]+)<\/b><\/p><span>券后价<\/span>[\s\S]*?<\/i>([\d.]+)<\/b><\/p><span>优惠券<\/span>[\s\S]*?<p>([\d.]+)<b>%<\/b><\/p><span>\s*([^<]+?)\s*<\/span>/gi;
+        let r = re.exec(html);
+        while (r) {
+          state.goods.push({
+            id: r[1],
+            uid: '',
+            name: r[2],
+            finalPrice: r[3],
+            discount: r[4],
+            planNum: r[5],
+            planType: r[6],
+            url: '',
+            discountUrl: '',
+          });
+          r = re.exec(html);
+        }
       }
+      state.url = url;
       state.html = html;
     },
     [TSELL.QUERY_ITEM_SUCCESS](state, { p, html }) {
