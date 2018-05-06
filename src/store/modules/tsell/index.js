@@ -2,7 +2,7 @@
  * @Author: Zhai Yiming (root@derzh.com)
  * @Date:   2017-09-02 17:45:27
  * @Last Modified by:   Emine Zhai (root@derzh.com)
- * @Last Modified time: 2018-05-05 19:21:48
+ * @Last Modified time: 2018-05-07 01:29:52
  */
 /* eslint no-param-reassign: ["error", { "props": false }] */
 
@@ -21,7 +21,7 @@ export default {
   getters: {},
   actions: {
     [TSELL.QUERY_LIST]({ commit, state }, params) {
-      if (!state.html) {
+      if (!state.html || state.url !== params.url) {
         params.reload = true;
       }
       if (params.reload) {
