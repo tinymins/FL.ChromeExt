@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="query">
-      <el-input v-model="url" type="text" placeholder="请输入页面地址"></el-input>
+      <el-input v-model="url" type="text" placeholder="请输入页面地址或页面源码"></el-input>
       <el-button type="primary" class="query-btn" @click="queryList({ url, reload: true })">刷新列表</el-button>
       <el-button type="primary" class="query-btn" @click="queryItems({ reload: false })">增量获取详细数据</el-button>
       <el-button type="primary" class="query-btn" @click="queryItems({ reload: true })">刷新全部详细数据</el-button>
@@ -21,7 +21,7 @@
   </div>
 </template>
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapState, mapMutations } from 'vuex';
 import { Input, Button, Table, TableColumn, Alert } from 'element-ui';
 
 export default {
@@ -42,9 +42,25 @@ export default {
   },
   methods: {
     ...mapActions('tsell', {
-      queryList: 'TSELL_QUERY_LIST',
-      queryItems: 'TSELL_QUERY_ITEMS',
+      apiQueryList: 'TSELL_QUERY_LIST',
+      apiQueryItems: 'TSELL_QUERY_ITEMS',
     }),
+    ...mapMutations('tsell', {
+      apiDecodeList: 'TSELL_QUERY_LIST_SUCCESS',
+    }),
+    queryList(...args) {
+      if (this.url.match(/^https?:\/\//)) {
+        this.apiQueryList(...args);
+      } else {
+        this.apiDecodeList({
+          url: '',
+          html: this.url,
+        });
+      }
+    },
+    queryItems(...args) {
+      return this.apiQueryItems(...args);
+    },
   },
 };
 </script>
