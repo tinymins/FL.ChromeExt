@@ -1,8 +1,8 @@
 /**
  * @Author: Zhai Yiming (root@derzh.com)
  * @Date:   2017-09-02 17:45:27
- * @Last Modified by:   Emine Zhai (root@derzh.com)
- * @Last Modified time: 2018-05-05 17:46:12
+ * @Last Modified by:   Emil Zhai (root@derzh.com)
+ * @Last Modified time: 2018-07-18 00:50:26
  */
 /* eslint no-param-reassign: ["error", { "props": false }] */
 
@@ -106,7 +106,7 @@ export default {
       }
     },
     [CSORT.QUERY_SUCCESS](state, { p, html }) {
-      const re = /data-id='(\d+)' data-numiid='(\d+)'[^]+'J-list-name'><a href="([^"]+)"[^]+" alt="([^"]+)" data-original="([^"]+)"[^]+>已启用<[^]+ajaxSetAsort\(\1,'asort'[^]+value="(\d+)" id="csort\1"/gui;
+      const re = /data-id='(\d+)' data-numiid='(\d+)'[^]+'J-list-name'><a href="([^"]+)"[^]+" alt="([^"]+)" data-original="([^"]+)"[^]+>已启用<[^]+value="(\d+)" id="csort\1"/gui;
       let r = re.exec(html);
       const matched = !!r;
       while (r) {
