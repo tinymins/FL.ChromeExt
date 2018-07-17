@@ -37,14 +37,16 @@
             <img :src="scope.row.image" style="max-width: 50px; max-height: 50px;">
           </template>
         </el-table-column>
-        <el-table-column prop="uid" label="ID" width="100">
-        </el-table-column>
         <el-table-column prop="id" label="商品ID" width="180">
         </el-table-column>
         <el-table-column label="商品名称">
           <template slot-scope="scope">
             <a :href="scope.row.url" style="color: #2AB3DE;" target="__blank">{{ scope.row.name }}</a>
           </template>
+        </el-table-column>
+        <el-table-column prop="price" label="券后价" width="80">
+        </el-table-column>
+        <el-table-column prop="soldOut" label="售罄" width="80">
         </el-table-column>
         <el-table-column prop="sort" label="当前超级排序" width="80">
         </el-table-column>

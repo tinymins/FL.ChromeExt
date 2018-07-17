@@ -2,7 +2,7 @@
  * @Author: Zhai Yiming (root@derzh.com)
  * @Date:   2017-09-02 17:45:27
  * @Last Modified by:   Emil Zhai (root@derzh.com)
- * @Last Modified time: 2018-07-18 00:50:26
+ * @Last Modified time: 2018-07-18 02:16:37
  */
 /* eslint no-param-reassign: ["error", { "props": false }] */
 
@@ -106,7 +106,7 @@ export default {
       }
     },
     [CSORT.QUERY_SUCCESS](state, { p, html }) {
-      const re = /data-id='(\d+)' data-numiid='(\d+)'[^]+'J-list-name'><a href="([^"]+)"[^]+" alt="([^"]+)" data-original="([^"]+)"[^]+>已启用<[^]+value="(\d+)" id="csort\1"/gui;
+      const re = /data-id='(\d+)' data-numiid='(\d+)'[^]+'J-list-name'><a href="([^"]+)"[^]+" alt="([^"]+)" data-original="([^"]+)"[^]+<td>[^]+<td>([\d.]+)<\/td>[^]+<td>[^]+<td>[^]+<td>\s*(是|否)\s*<\/td>[^]+>已启用<[^]+value="(\d+)" id="csort\1"/gi;
       let r = re.exec(html);
       const matched = !!r;
       while (r) {
@@ -116,7 +116,9 @@ export default {
           url: r[3],
           name: r[4],
           image: r[5],
-          sort: r[6],
+          price: r[6],
+          soldOut: r[7],
+          sort: r[8],
           newSort: p.newSort,
           submitting: false,
         });
