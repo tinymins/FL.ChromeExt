@@ -2,7 +2,7 @@
  * @Author: Zhai Yiming (root@derzh.com)
  * @Date:   2017-09-02 17:45:27
  * @Last Modified by:   Emil Zhai (root@derzh.com)
- * @Last Modified time: 2018-07-18 01:50:14
+ * @Last Modified time: 2018-07-18 02:03:59
  */
 /* eslint no-param-reassign: ["error", { "props": false }] */
 
@@ -72,7 +72,7 @@ export default {
       state.htmls = [];
     },
     [TSELL.QUERY_LIST_SUCCESS](state, { url, html }) {
-      if (html.match(/<span>券后价<\/span>.+?<span>优惠券<\/span>/)) {
+      if (html.match(/<span>券后价<\/span>[\s\S]*?<\/i>([\d.]+)<\/b><\/p><span>优惠券<\/span>/gi)) {
         const re = /<div id="goods-items_([\d.]+)"[\s\S]*?<a href="\/item\?id=\1" target="_blank">\s*([\s\S]*?)\s*<\/a>[\s\S]*?<\/i>([\d.]+)<\/b><\/p><span>券后价<\/span>[\s\S]*?<\/i>([\d.]+)<\/b><\/p><span>优惠券<\/span>[\s\S]*?<p>([\d.]+)<b>%<\/b><\/p><span>\s*([^<]+?)\s*<\/span>/gi;
         let r = re.exec(html);
         while (r) {
