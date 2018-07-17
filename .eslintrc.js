@@ -120,7 +120,7 @@ module.exports = {
     'vue/no-side-effects-in-computed-properties': 'error',
     'vue/no-template-key': 'error',
     'vue/no-textarea-mustache': 'error',
-    'vue/order-in-components': 'warn',
+    'vue/attributes-order': 'off',
     // 'vue/order-in-components': ['error', {
     //   'order': [
     //     ['name', 'delimiters', 'functional', 'model'],
