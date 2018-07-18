@@ -10,5 +10,11 @@
   },
   "web_accessible_resources": ["scripts.insert/*"],
 
-  "permissions": ["activeTab", "http://trace.51fanli.com/", "http://www.dataoke.com/top_sell/"]
+  "permissions": [
+    "webRequest",
+    "webRequestBlocking",
+    "activeTab",
+    "http://trace.51fanli.com/",
+    "http://www.dataoke.com/top_sell/"
+  ]
 }
