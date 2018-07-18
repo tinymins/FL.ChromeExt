@@ -2,13 +2,14 @@
  * @Author: Zhai Yiming (root@derzh.com)
  * @Date:   2017-09-02 17:45:27
  * @Last Modified by:   Emil Zhai (root@derzh.com)
- * @Last Modified time: 2018-07-18 02:16:37
+ * @Last Modified time: 2018-07-19 00:10:29
  */
 /* eslint no-param-reassign: ["error", { "props": false }] */
 
 import * as api from '@/store/api/csort';
 import { openIndicator, closeIndicator } from '@/store/api';
 import { CSORT } from '@/store/types';
+import { decodeTable, regexGet, getPureText } from '@/utils/util';
 
 export default {
   namespaced: true,
@@ -45,7 +46,7 @@ export default {
               `加载商品 ${p.id}`,
               p.id,
             ).then((res) => {
-              commit(CSORT.QUERY_SUCCESS, { p, html: res.data });
+              commit(CSORT.QUERY_SUCCESS, { rec: p, html: res.data });
               next();
             }).catch(() => {
               next();
@@ -105,26 +106,27 @@ export default {
         state.goods.push(g);
       }
     },
-    [CSORT.QUERY_SUCCESS](state, { p, html }) {
-      const re = /data-id='(\d+)' data-numiid='(\d+)'[^]+'J-list-name'><a href="([^"]+)"[^]+" alt="([^"]+)" data-original="([^"]+)"[^]+<td>[^]+<td>([\d.]+)<\/td>[^]+<td>[^]+<td>[^]+<td>\s*(是|否)\s*<\/td>[^]+>已启用<[^]+value="(\d+)" id="csort\1"/gi;
-      let r = re.exec(html);
-      const matched = !!r;
-      while (r) {
-        state.goods.push({
-          uid: r[1],
-          id: r[2],
-          url: r[3],
-          name: r[4],
-          image: r[5],
-          price: r[6],
-          soldOut: r[7],
-          sort: r[8],
-          newSort: p.newSort,
+    [CSORT.QUERY_SUCCESS](state, { rec, html }) {
+      let matched = false;
+      const processRow = (row) => {
+        const good = {
+          uid: getPureText(row.columns[1]),
+          id: regexGet(row.columns[0], /data-numiid='(\d+)'/),
+          url: regexGet(row.columns[4], /href="([^"]+)"/),
+          name: getPureText(row.columns[4]),
+          image: regexGet(row.columns[6], /href="([^"]+)"/),
+          price: getPureText(row.columns[8]),
+          soldOut: getPureText(row.columns[11]),
+          sort: regexGet(row.columns[14], /value="(\d+)" id="csort/),
+          newSort: rec.newSort,
           submitting: false,
-        });
-        r = re.exec(html);
-      }
-      state.htmls.push({ id: p.id, html, matched });
+        };
+        matched = true;
+        state.goods.push(good);
+      };
+      const tbs = decodeTable(html).filter(p => p.maxColumn === 17);
+      tbs.forEach(p => p.rows.forEach(processRow));
+      state.htmls.push({ id: rec.id, html, matched });
     },
     [CSORT.SUBMIT](state, p) {
       state.goods.filter(c => c.uid === p.uid).forEach((c) => { c.submitting = true; });
