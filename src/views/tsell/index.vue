@@ -46,12 +46,14 @@ export default {
       apiQueryItems: 'TSELL_QUERY_ITEMS',
     }),
     ...mapMutations('tsell', {
+      apiClearList: 'TSELL_QUERY_LIST',
       apiDecodeList: 'TSELL_QUERY_LIST_SUCCESS',
     }),
     queryList(...args) {
       if (this.url.match(/^https?:\/\//)) {
         this.apiQueryList(...args);
       } else {
+        this.apiClearList();
         this.apiDecodeList({
           url: '',
           html: this.url,

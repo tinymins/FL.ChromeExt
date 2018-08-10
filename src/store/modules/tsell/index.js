@@ -2,13 +2,14 @@
  * @Author: Zhai Yiming (root@derzh.com)
  * @Date:   2017-09-02 17:45:27
  * @Last Modified by:   Emil Zhai (root@derzh.com)
- * @Last Modified time: 2018-07-18 02:03:59
+ * @Last Modified time: 2018-08-10 18:33:53
  */
 /* eslint no-param-reassign: ["error", { "props": false }] */
 
 import * as api from '@/store/api/tsell';
 import { openIndicator, closeIndicator } from '@/store/api';
 import { TSELL } from '@/store/types';
+import cheerio from 'cheerio';
 
 export default {
   namespaced: true,
@@ -72,41 +73,21 @@ export default {
       state.htmls = [];
     },
     [TSELL.QUERY_LIST_SUCCESS](state, { url, html }) {
-      if (html.match(/<span>券后价<\/span>[\s\S]*?<\/i>([\d.]+)<\/b><\/p><span>优惠券<\/span>/gi)) {
-        const re = /<div id="goods-items_([\d.]+)"[\s\S]*?<a href="\/item\?id=\1" target="_blank">\s*([\s\S]*?)\s*<\/a>[\s\S]*?<\/i>([\d.]+)<\/b><\/p><span>券后价<\/span>[\s\S]*?<\/i>([\d.]+)<\/b><\/p><span>优惠券<\/span>[\s\S]*?<p>([\d.]+)<b>%<\/b><\/p><span>\s*([^<]+?)\s*<\/span>/gi;
-        let r = re.exec(html);
-        while (r) {
-          state.goods.push({
-            id: r[1],
-            uid: '',
-            name: r[2],
-            finalPrice: r[3],
-            discount: r[4],
-            planNum: r[5],
-            planType: r[6],
-            url: '',
-            discountUrl: '',
-          });
-          r = re.exec(html);
-        }
-      } else {
-        const re = /<div id="goods-items_([\d.]+)"[\s\S]*?<a href="\/item\?id=\1" target="_blank"><!--remove the class="quan_title" attribute for this "a" tag-->\s*([\s\S]*?)\s*<\/a>[\s\S]*?<span>券后价<\/span>[\s\S]*?<\/i>([\d.]+)<\/b>[\s\S]*?<span>\s*([^<]*?)\s*<\/span><p>([\d.]+)<b>[\s\S]*?<p>券[\s\S]*?<\/i>([\d.]+)<\/b>/gi;
-        let r = re.exec(html);
-        while (r) {
-          state.goods.push({
-            id: r[1],
-            uid: '',
-            name: r[2],
-            finalPrice: r[3],
-            discount: r[6],
-            planNum: r[5],
-            planType: r[4],
-            url: '',
-            discountUrl: '',
-          });
-          r = re.exec(html);
-        }
-      }
+      const $ = cheerio.load(html);
+      $('.goods-item').each((_, element) => {
+        const $goods = $(element);
+        state.goods.push({
+          id: $goods.attr('id').replace(/[^\d]/ig, '').trim(),
+          uid: $goods.attr('data_goodsid').trim(),
+          name: $goods.find('.goods-tit').text().trim(),
+          finalPrice: $goods.find('.goods-price').text().replace(/[^\d.]/ig, '').trim(),
+          discount: $goods.find('.goods-quan').text().replace(/[^\d.]/ig, '').trim(),
+          planNum: $goods.find('.goods-yj').find('p').text().trim(),
+          planType: $goods.find('.goods-yj').find('span').text().trim(),
+          url: '',
+          discountUrl: '',
+        });
+      });
       state.url = url;
       state.html = html;
     },
