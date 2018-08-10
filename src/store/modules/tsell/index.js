@@ -2,7 +2,7 @@
  * @Author: Zhai Yiming (root@derzh.com)
  * @Date:   2017-09-02 17:45:27
  * @Last Modified by:   Emil Zhai (root@derzh.com)
- * @Last Modified time: 2018-08-10 18:33:53
+ * @Last Modified time: 2018-08-10 18:37:42
  */
 /* eslint no-param-reassign: ["error", { "props": false }] */
 
@@ -80,9 +80,9 @@ export default {
           id: $goods.attr('id').replace(/[^\d]/ig, '').trim(),
           uid: $goods.attr('data_goodsid').trim(),
           name: $goods.find('.goods-tit').text().trim(),
-          finalPrice: $goods.find('.goods-price').text().replace(/[^\d.]/ig, '').trim(),
-          discount: $goods.find('.goods-quan').text().replace(/[^\d.]/ig, '').trim(),
-          planNum: $goods.find('.goods-yj').find('p').text().trim(),
+          finalPrice: parseFloat($goods.find('.goods-price').text().replace(/[^\d.]/ig, '').trim()),
+          discount: parseFloat($goods.find('.goods-quan').text().replace(/[^\d.]/ig, '').trim()),
+          planNum: parseFloat($goods.find('.goods-yj').find('p').text().trim()),
           planType: $goods.find('.goods-yj').find('span').text().trim(),
           url: '',
           discountUrl: '',
