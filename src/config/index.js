@@ -1,8 +1,9 @@
 /**
- * @Author: Zhai Yiming (root@derzh.com)
- * @Date:   2017-08-22 19:32:30
- * @Last Modified by:   Emine Zhai (root@derzh.com)
- * @Last Modified time: 2018-05-05 15:34:34
+ * This file is part of Fanli chrome extension.
+ * @link     : https://zhaiyiming.com/
+ * @author   : Emil Zhai (root@derzh.com)
+ * @modifier : Emil Zhai (root@derzh.com)
+ * @copyright: Copyright (c) 2018 TINYMINS.
  */
 
 export const BASE_API_HOST = '/api';

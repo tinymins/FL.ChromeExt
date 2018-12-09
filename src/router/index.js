@@ -1,8 +1,9 @@
 /**
- * @Author: Zhai Yiming (root@derzh.com)
- * @Date:   2017-11-01 13:44:21
- * @Last Modified by:   Emine Zhai (root@derzh.com)
- * @Last Modified time: 2018-05-05 15:42:56
+ * This file is part of Fanli chrome extension.
+ * @link     : https://zhaiyiming.com/
+ * @author   : Emil Zhai (root@derzh.com)
+ * @modifier : Emil Zhai (root@derzh.com)
+ * @copyright: Copyright (c) 2018 TINYMINS.
  */
 /* eslint no-return-assign: "off" */
 /* eslint no-param-reassign: ["error", { "props": false }] */

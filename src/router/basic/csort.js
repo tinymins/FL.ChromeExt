@@ -1,8 +1,9 @@
 /**
- * @Author: Zhai Yiming (root@derzh.com)
- * @Date:   2017-09-02 17:19:11
- * @Last Modified by:   Zhai Yiming
- * @Last Modified time: 2017-09-03 09:50:01
+ * This file is part of Fanli chrome extension.
+ * @link     : https://zhaiyiming.com/
+ * @author   : Emil Zhai (root@derzh.com)
+ * @modifier : Emil Zhai (root@derzh.com)
+ * @copyright: Copyright (c) 2018 TINYMINS.
  */
 
 export default [
@@ -17,4 +18,3 @@ export default [
     },
   },
 ];
-

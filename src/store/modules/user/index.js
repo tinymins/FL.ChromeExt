@@ -1,9 +1,10 @@
-/*
-* @Author: William Chan
-* @Date:   2017-05-03 15:53:04
-* @Last Modified by:   Administrator
-* @Last Modified time: 2017-05-03 21:15:10
-*/
+/**
+ * This file is part of Fanli chrome extension.
+ * @link     : https://zhaiyiming.com/
+ * @author   : Emil Zhai (root@derzh.com)
+ * @modifier : Emil Zhai (root@derzh.com)
+ * @copyright: Copyright (c) 2018 TINYMINS.
+ */
 /* eslint no-param-reassign: ["error", { "props": false }] */
 
 import * as api from '@/store/api/user';
