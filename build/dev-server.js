@@ -91,7 +91,7 @@ var readyPromise = new Promise(resolve => {
   _resolve = resolve
 })
 
-console.log('> Staring dev server...')
+console.log('> Starting dev server...')
 devMiddleware.waitUntilValid(() => {
   var ips = getLocalIps()
   ips.unshift('localhost')

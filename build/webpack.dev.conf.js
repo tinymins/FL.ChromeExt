@@ -6,6 +6,7 @@ var merge = require('webpack-merge')
 var baseWebpackConfig = require('./webpack.base.conf')
 var HtmlWebpackPlugin = require('html-webpack-plugin')
 var FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
+var StyleLintPlugin = require('stylelint-webpack-plugin')
 
 // add hot-reload related code to entry chunks
 Object.keys(baseWebpackConfig.entry).forEach(function (name) {
@@ -18,6 +19,11 @@ module.exports = merge(baseWebpackConfig, {
   },
   // cheap-module-eval-source-map is faster for development
   devtool: '#cheap-module-eval-source-map',
+  output: {
+    path: config.build.assetsRoot,
+    filename: utils.assetsPath('js/[name].[hash].js'),
+    chunkFilename: utils.assetsPath('js/[id].[chunkhash].js')
+  },
   plugins: [
     new webpack.DefinePlugin({
       'process.env': config.dev.env
@@ -32,6 +38,12 @@ module.exports = merge(baseWebpackConfig, {
       inject: true,
       favicon: path.resolve(__dirname, '../src/assets/favicon.ico'),
     }),
-    new FriendlyErrorsPlugin()
+    new FriendlyErrorsPlugin(),
+    new StyleLintPlugin({
+      files: [
+        'src/**/*.vue',
+        'src/**/*.l?(e|c)ss'
+      ]
+    })
   ]
 })
