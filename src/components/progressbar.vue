@@ -95,7 +95,7 @@ export default {
   right: 0;
   height: 2px;
   width: 0%;
-  transition: width 0.2s, opacity 0.4s;
+  transition: width .2s, opacity .4s;
   opacity: 1;
   z-index: 999999;
 }

@@ -63,13 +63,16 @@ export default {
 .nav-wrapper {
   background-color: #eef1f6;
 }
+
 .nav {
   display: flex;
   margin: 0 auto;
   max-width: 960px;
+
   &-menu {
-    flex:1;
+    flex: 1;
   }
+
   &-user {
     font-size: 20px;
     line-height: 60px;
