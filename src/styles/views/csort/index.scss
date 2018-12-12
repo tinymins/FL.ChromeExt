@@ -5,14 +5,22 @@
  * @modifier : Emil Zhai (root@derzh.com)
  * @copyright: Copyright (c) 2018 TINYMINS.
  */
+
+.main {
+  padding: 0 20px;
+}
+
 .query {
   display: flex;
+
   .textarea {
     margin: 10px 5px;
   }
+
   &-btn {
     flex: 1;
   }
+
   &-mismatch-alert {
     margin-bottom: 10px;
   }
@@ -25,6 +33,7 @@
 .submit {
   display: flex;
   margin: 5px 0 20px 0;
+
   &-btn {
     flex: 1;
   }

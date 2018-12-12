@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="main">
     <div class="query">
       <el-input v-model="url" type="text" placeholder="请输入页面地址或页面源码"></el-input>
       <el-button type="primary" class="query-btn" @click="queryList({ url, reload: true })">刷新列表</el-button>
@@ -68,5 +68,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../styles/views/tsell/index.scss';
+@import '~styles/views/tsell/index.scss';
 </style>

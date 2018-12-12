@@ -1,10 +1,12 @@
 .DS_Store
 node_modules/
+dist/static/
+dist/favicon.ico
+dist/index.html
+dist/app.js
+dist/report.html
+dist/archive.zip
 dist.crx
 dist.pem
-dist/static/
 dist/dist.zip
-dist/index.html
-dist/favicon.ico
-dist/Archive.zip
 npm-debug.log*

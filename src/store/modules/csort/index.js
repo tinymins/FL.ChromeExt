@@ -5,89 +5,72 @@
  * @modifier : Emil Zhai (root@derzh.com)
  * @copyright: Copyright (c) 2018 TINYMINS.
  */
-/* eslint no-param-reassign: ["error", { "props": false }] */
+/* eslint no-param-reassign: "off" */
 
 import * as api from '@/store/api/csort';
-import { openIndicator, closeIndicator } from '@/store/api';
 import { CSORT } from '@/store/types';
-import { decodeTable, regexGet, getPureText } from '@/utils/util';
+import { showLoading, hideLoading } from '@/store/utils';
 
 export default {
   namespaced: true,
   state: {
-    htmls: [],
     goods: [],
   },
   getters: {},
   actions: {
-    [CSORT.QUERY]({ commit, state }, { ids, newSorts, local = false }) {
-      commit(CSORT.QUERY, ids);
-      const list = ids.map((id, index) => ({
-        id,
-        newSort: newSorts[index],
-      }));
-      const hasRequest = local ? 0 : list.filter(
-        p => state.goods.filter(c => c.id === p.id).length === 0,
-      ).length > 0;
-      return new Promise((resolve) => {
-        if (hasRequest) {
-          openIndicator('csort lock');
-        }
-        const next = () => {
-          if (list.length === 0) {
-            if (hasRequest) {
-              closeIndicator('csort lock');
+    [CSORT.QUERY]({ commit, state }, { reload, iids }) {
+      const list = reload
+        ? Object.assign([], iids)
+        : iids.filter(iid => !state.goods.some(p => p.iid === iid));
+      if (list.length > 0) {
+        commit(CSORT.QUERY, { reload });
+        return new Promise((resolve) => {
+          const loading = showLoading();
+          const next = () => {
+            if (list.length === 0) {
+              hideLoading({ id: loading });
+              resolve();
+              return;
             }
-            resolve();
-            return;
-          }
-          const p = list.shift();
-          if (hasRequest && state.goods.filter(c => c.id === p.id).length === 0) {
-            api.queryList(
-              `加载商品 ${p.id}`,
-              p.id,
-            ).then((res) => {
-              commit(CSORT.QUERY_SUCCESS, { rec: p, html: res.data });
+            const iid = list.shift();
+            const subLoading = showLoading({ text: `加载商品 ${iid}` });
+            api.queryList(iid).then((res) => {
+              commit(CSORT.QUERY_SUCCESS, { list: res.data.data });
               next();
             }).catch(() => {
               next();
+            }).finally(() => {
+              hideLoading({ id: subLoading });
             });
-          } else {
-            commit(CSORT.QUERY_UPDATE, { p });
-            next();
-          }
-        };
-        next();
-      });
+          };
+          next();
+        });
+      }
+      return Promise.resolve();
     },
     [CSORT.SUBMIT]({ commit }, orilist) {
-      const list = orilist.filter(p => p.newSort !== undefined && p.newSort !== p.sort);
+      const list = Object.assign([], orilist);
       if (list.length === 0) {
         return Promise.resolve();
       }
       return new Promise((resolve) => {
-        openIndicator();
+        const loading = showLoading();
         const next = () => {
           if (list.length === 0) {
-            closeIndicator();
+            hideLoading({ id: loading });
             resolve();
             return;
           }
           const p = list.shift();
-          api.submit(
-            `修改商品 [${p.name}](${p.id}) 超级排序为 ${p.newSort}`,
-            p.uid, p.newSort,
-          ).then((res) => {
-            if (res.data.status === 1) {
-              commit(CSORT.SUBMIT_SUCCESS, p);
-              next();
-            } else {
-              commit(CSORT.SUBMIT_FAILURE, p);
-              next();
-            }
+          const subLoading = showLoading({ text: `修改商品 [${p.name}](${p.iid}) 超级排序为 ${p.newSuperSort}` });
+          api.submit(p.id, p.newSuperSort).then(() => {
+            commit(CSORT.SUBMIT_SUCCESS, p);
+            next();
           }).catch(() => {
             commit(CSORT.SUBMIT_FAILURE, p);
             next();
+          }).finally(() => {
+            hideLoading({ id: subLoading });
           });
         };
         next();
@@ -95,51 +78,31 @@ export default {
     },
   },
   mutations: {
-    [CSORT.QUERY](state, ids) {
-      state.goods = state.goods.filter(c => ids.includes(c.id));
-      state.htmls = state.htmls.filter(c => ids.includes(c.id) && c.matched);
-    },
-    [CSORT.QUERY_UPDATE](state, { p }) {
-      const g = state.goods.find(c => c.id === p.id);
-      state.goods = state.goods.filter(c => c.id !== p.id);
-      if (g) {
-        g.newSort = p.newSort;
-        state.goods.push(g);
+    [CSORT.QUERY](state, { reload }) {
+      if (reload) {
+        state.goods = [];
       }
     },
-    [CSORT.QUERY_SUCCESS](state, { rec, html }) {
-      let matched = false;
-      const processRow = (row) => {
-        const good = {
-          uid: getPureText(row.columns[1]),
-          id: regexGet(row.columns[0], /data-numiid='(\d+)'/),
-          url: regexGet(row.columns[4], /href="([^"]+)"/),
-          name: getPureText(row.columns[4]),
-          image: regexGet(row.columns[6], /href="([^"]+)"/),
-          price: getPureText(row.columns[8]),
-          soldOut: getPureText(row.columns[11]),
-          sort: regexGet(row.columns[14], /value="(\d+)" id="csort/),
-          newSort: rec.newSort,
-          submitting: false,
-        };
-        matched = true;
-        state.goods.push(good);
-      };
-      const tbs = decodeTable(html).filter(p => p.maxColumn === 17);
-      tbs.forEach(p => p.rows.forEach(processRow));
-      state.htmls.push({ id: rec.id, html, matched });
+    [CSORT.QUERY_SUCCESS](state, { list }) {
+      list.forEach((item) => {
+        const index = state.goods.findIndex(c => c.id === item.id);
+        if (index >= 0) {
+          state.goods.splice(index, 1);
+        }
+        state.goods.push(item);
+      });
     },
     [CSORT.SUBMIT](state, p) {
-      state.goods.filter(c => c.uid === p.uid).forEach((c) => { c.submitting = true; });
+      state.goods.filter(c => c.id === p.id).forEach((c) => { c.submitting = true; });
     },
     [CSORT.SUBMIT_SUCCESS](state, p) {
-      state.goods.filter(c => c.uid === p.uid).forEach((c) => {
+      state.goods.filter(c => c.id === p.id).forEach((c) => {
         c.submitting = false;
-        c.sort = p.newSort;
+        c.superSort = p.newSuperSort;
       });
     },
     [CSORT.SUBMIT_FAILURE](state, p) {
-      state.goods.filter(c => c.uid === p.uid).forEach((c) => { c.submitting = false; });
+      state.goods.filter(c => c.id === p.id).forEach((c) => { c.submitting = false; });
     },
   },
 };

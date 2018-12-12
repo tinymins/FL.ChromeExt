@@ -12,9 +12,9 @@ export default [
     path: '/popup',
     meta: { parent: 'popup', nav: 'popup', title: 'FL 自动化' },
     components: {
-      header: () => import('@/components/main.vue'),
+      header: () => import('@/views/common/main/index.vue'),
       main: () => import('@/views/popup/index.vue'),
-      footer: () => import('@/components/main.vue'),
+      footer: () => import('@/views/common/main/index.vue'),
     },
   },
 ];

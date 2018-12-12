@@ -9,70 +9,105 @@
 
 import * as api from '@/store/api/user';
 import { USER } from '@/store/types';
-
+import router from '@/router';
+import store from '@/store';
+import { isInWechat, isLocalhost } from '@/utils/environment';
+import { getAuthorizeURL } from '@/utils/authorization';
+import { showLoading, hideLoading } from '@/store/utils';
 
 export default {
   namespaced: true,
   state: {
     user: null,
+    status: 401,
   },
   getters: {
     user: (state) => {
       if (state.user && Object.keys(state.user).length !== 0) {
         return state.user;
       }
-      return false;
+      return null;
     },
+    status: state => state.status,
   },
   actions: {
-    [USER.LOGIN]({ commit }, { account, password }) {
+    [USER.LOGIN]({ dispatch, rootState }, { account, password }) {
       return new Promise((resolve, reject) => {
-        api.login(
-          '努力登录中',
-          account, password,
-        ).then((res) => {
-          if (res.data.status === 1) {
-            commit(USER.GET, null);
+        const loading = showLoading({ text: '努力登录中' });
+        api.login(account, password).then(() => {
+          dispatch(USER.GET, { reload: true }).then(() => {
+            const redirect = rootState.route.query.redirect;
+            if (redirect) {
+              router.push({ path: redirect });
+            } else {
+              router.push({ name: 'user_index' });
+            }
             resolve();
-          } else {
-            reject(res.data.info);
-          }
-        }).catch((err) => {
-          reject(err.message);
+          });
+        }).catch(reject).finally(() => {
+          hideLoading({ id: loading });
         });
       });
     },
-    [USER.LOGOUT]({ commit }) {
+    [USER.LOGOUT]({ dispatch }) {
       return new Promise((resolve, reject) => {
-        api.logout('努力退出登录').then(() => {
-          commit(USER.LOGOUT);
+        const loading = showLoading({ text: '努力退出登录' });
+        api.logout().then(() => {
+          dispatch(USER.CLEAR);
           resolve();
-        }).catch(reject);
+        }).catch(reject).finally(() => {
+          hideLoading({ id: loading });
+        });
       });
     },
-    [USER.GET]({ commit, state }, force) {
-      if (force || !state.user) {
-        return api.getUser('获取当前登录状态').then((res) => {
-          const re = /nickname" value="([^"]+)"/gui;
-          const r = re.exec(res.data);
-          if (r) {
-            commit(USER.GET, { name: r[1] });
-          } else {
-            commit(USER.LOGOUT);
-          }
-        }).catch(() => {
-          commit(USER.LOGOUT);
+    [USER.GET]({ commit, state }, { reload, refresh, strict = true } = {}) {
+      if (refresh ? state.user : reload || !state.user) {
+        return new Promise((resolve) => {
+          const loading = showLoading({ text: '获取当前登录状态' });
+          api.getUser(strict).then((res) => {
+            commit(USER.GET, {
+              status: res.data.data ? res.status : 401,
+              user: res.data.data || {},
+            });
+            resolve();
+          }).catch((err) => {
+            commit(USER.GET, { status: err.response.status });
+            resolve();
+          }).finally(() => {
+            hideLoading({ id: loading });
+          });
         });
+      }
+      return Promise.resolve();
+    },
+    [USER.CLEAR]({ commit, rootState: { route: { fullPath } } }, { isLogout = false, requiresAuth = false } = {}) {
+      commit(isLogout ? USER.LOGOUT : USER.CLEAR);
+      const route = store.state.common.route.to || router.resolve(fullPath).route;
+      if (requiresAuth || route.matched.some(record => record.meta.requiresAuth)) {
+        if (!isLocalhost() && isInWechat() && getAuthorizeURL('wx', 'login')) {
+          window.location = getAuthorizeURL('wx', 'login', route);
+        } else {
+          router.replace({
+            name: 'user_login',
+            query: { redirect: route.fullPath },
+          });
+        }
       }
       return Promise.resolve();
     },
   },
   mutations: {
-    [USER.GET](state, data) {
-      state.user = data;
+    [USER.GET](state, { status, user = {} }) {
+      state.user = user;
+      state.status = status;
     },
     [USER.LOGOUT](state) {
       state.user = {};
+      state.status = 401;
+    },
+    [USER.CLEAR](state) {
+      state.user = null;
+      state.status = 401;
     },
   },
 };

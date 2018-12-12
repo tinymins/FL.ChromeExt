@@ -1,11 +1,10 @@
-const isDev = process.env.NODE_ENV === 'development';
-
 // http://eslint.org/docs/user-guide/configuring
 module.exports = {
   root: true,
   parserOptions: {
     parser: 'babel-eslint',
-    sourceType: 'module'
+    sourceType: 'module',
+    ecmaVersion: 2018,
   },
   env: {
     browser: true,
@@ -13,11 +12,13 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:vue/recommended', // or 'plugin:vue/base'
+    'plugin:compat/recommended',
     'airbnb-base',
   ],
   // required to lint *.vue files
   plugins: [
     'vue',
+    'compat',
   ],
   // check if imports actually resolve
   'settings': {
@@ -26,6 +27,9 @@ module.exports = {
         'config': 'build/webpack.base.conf.js'
       }
     },
+    'polyfills': [
+      'promises',
+    ],
   },
   // add your custom rules here
   'rules': {
@@ -35,18 +39,24 @@ module.exports = {
     }],
     'function-paren-newline': ['error', 'consistent'],
     'id-match': ['error', '^(?:\\${0,1}[a-zA-Z0-9]*||[A-Z_0-9]+)$', {
+      'properties': true,
+      'propertiesPattern': '^(?:\\${0,1}[a-z]+[a-zA-Z0-9]*||[A-Z_0-9]+)$',
       'onlyDeclarations': true,
+      'errorMessage': 'Identifier \'{{name}}\' in not in lower camelcase.',
     }],
+    'implicit-arrow-linebreak': 'off',
     'max-len': ['error', {
       'code': 140,
       'ignoreTrailingComments': true,
       'ignoreStrings': true,
       'ignoreTemplateLiterals': true,
       'ignoreUrls': true,
-      'ignoreComments': true,
-      'ignoreRegExpLiterals': true
+      'ignoreComments': true
     }],
     'no-underscore-dangle': 0,
+    'no-restricted-imports': ['error', {
+      'paths': ['lodash'],
+    }],
     'no-return-assign': 0,
     'object-curly-newline': ['error', {
       'consistent': true
@@ -56,16 +66,20 @@ module.exports = {
     }],
     'one-var-declaration-per-line': ['error', 'initializations'],
     'prefer-destructuring': 0,
-    // allow debugger during development
-    'no-debugger': isDev ? 0 : 2,
-    'no-console': isDev ? 0 : 1,
-    'no-unused-vars': isDev ? 0 : 1,
+    'no-debugger': 'error',
+    'no-console': 'error',
+    'no-empty': ['error', {
+      'allowEmptyCatch': true,
+    }],
+    'no-unused-vars': 'error',
 
     // don't require .vue extension when importing
     'import/extensions': ['error', 'always', {
       'js': 'never',
       'vue': 'never'
     }],
+    // 'import/no-cycle': ['error', { maxDepth: 1 }],
+    'import/no-cycle': 'off',
     // allow optionalDependencies
     'import/no-extraneous-dependencies': ['error', {
       'optionalDependencies': ['test/unit/index.js']
@@ -75,9 +89,20 @@ module.exports = {
 
     // vue lint configs
     'vue/attribute-hyphenation': ['error', 'always'],
-    'vue/attributes-order': [1, {
-      order: ['DEFINITION', 'LIST_RENDERING', 'CONDITIONALS', 'RENDER_MODIFIERS', 'GLOBAL', 'UNIQUE', ['BINDING', 'OTHER_ATTR'], 'EVENTS', 'CONTENT']
-    }],
+    'vue/attributes-order': 'off',
+    // 'vue/attributes-order': [2, {
+    //   order: [
+    //     'DEFINITION',
+    //     'LIST_RENDERING',
+    //     'CONDITIONALS',
+    //     'RENDER_MODIFIERS',
+    //     'GLOBAL',
+    //     'UNIQUE',
+    //     ['BINDING', 'OTHER_ATTR'],
+    //     'EVENTS',
+    //     'CONTENT',
+    //   ],
+    // }],
     'vue/html-end-tags': 'error',
     'vue/html-indent': ['error', 2, {
       'attribute': 1,
@@ -120,7 +145,8 @@ module.exports = {
     'vue/no-side-effects-in-computed-properties': 'error',
     'vue/no-template-key': 'error',
     'vue/no-textarea-mustache': 'error',
-    'vue/attributes-order': 'off',
+    'vue/no-v-html': 'off',
+    'vue/order-in-components': 'warn',
     // 'vue/order-in-components': ['error', {
     //   'order': [
     //     ['name', 'delimiters', 'functional', 'model'],
@@ -165,5 +191,6 @@ module.exports = {
     'vue/valid-v-pre': 'error',
     'vue/valid-v-show': 'error',
     'vue/valid-v-text': 'error',
+    'compat/compat': 'error',
   }
 }

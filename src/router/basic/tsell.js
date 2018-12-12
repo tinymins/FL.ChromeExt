@@ -12,9 +12,9 @@ export default [
     path: '/tsell',
     meta: { parent: 'tsell', nav: 'tsell', title: '实时榜单' },
     components: {
-      header: () => import('@/components/header.vue'),
+      header: () => import('@/views/common/header/index.vue'),
       main: () => import('@/views/tsell/index.vue'),
-      footer: () => import('@/components/footer.vue'),
+      footer: () => import('@/views/common/footer/index.vue'),
     },
   },
 ];

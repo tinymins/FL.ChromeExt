@@ -8,9 +8,8 @@
 /* eslint no-param-reassign: ["error", { "props": false }] */
 
 import * as api from '@/store/api/tsell';
-import { openIndicator, closeIndicator } from '@/store/api';
 import { TSELL } from '@/store/types';
-import cheerio from 'cheerio';
+import { showLoading, hideLoading } from '@/store/utils';
 
 export default {
   namespaced: true,
@@ -29,13 +28,16 @@ export default {
       if (params.reload) {
         commit(TSELL.QUERY_LIST);
         return new Promise((resolve, reject) => {
-          api.queryList(`正在从 ${params.url} 中获取数据`, params.url).then((res) => {
+          const loading = showLoading({ text: `正在从 ${params.url} 中获取数据` });
+          api.queryList(params.url).then((res) => {
             commit(TSELL.QUERY_LIST_SUCCESS, {
               url: params.url,
-              html: res.data,
+              list: res.data.data,
             });
             resolve();
-          }).catch(reject);
+          }).catch(reject).finally(() => {
+            hideLoading({ id: loading });
+          });
         });
       }
       return Promise.resolve();
@@ -44,21 +46,21 @@ export default {
       const list = params.reload ? state.goods.slice(0) : state.goods.filter(p => p.url === '');
       if (list.length > 0) {
         return new Promise((resolve) => {
-          openIndicator('tsell lock');
+          const loading = showLoading();
           const next = () => {
             if (list.length === 0) {
-              closeIndicator('tsell lock');
+              hideLoading({ id: loading });
               resolve();
               return;
             }
             const p = list.shift();
-            api.queryItem(
-              `加载商品 ${p.name}`,
-              p.id,
-            ).then((res) => {
-              commit(TSELL.QUERY_ITEM_SUCCESS, { p, html: res.data });
+            const subLoading = showLoading({ text: `加载商品 ${p.name}` });
+            api.queryItem(p.id).then((res) => {
+              commit(TSELL.QUERY_ITEM_SUCCESS, { p, item: res.data.data });
               next();
-            }).catch(next);
+            }).catch(next).finally(() => {
+              hideLoading({ id: subLoading });
+            });
           };
           next();
         });
@@ -73,33 +75,12 @@ export default {
       state.goods = [];
       state.htmls = [];
     },
-    [TSELL.QUERY_LIST_SUCCESS](state, { url, html }) {
-      const $ = cheerio.load(html);
-      $('.goods-item').each((_, element) => {
-        const $goods = $(element);
-        state.goods.push({
-          id: $goods.attr('id').replace(/[^\d]/ig, '').trim(),
-          uid: $goods.attr('data_goodsid').trim(),
-          name: $goods.find('.goods-tit').text().trim(),
-          finalPrice: parseFloat($goods.find('.goods-price').text().replace(/[^\d.]/ig, '').trim()),
-          discount: parseFloat($goods.find('.goods-quan').text().replace(/[^\d.]/ig, '').trim()),
-          planNum: parseFloat($goods.find('.goods-yj').find('p').text().trim()),
-          planType: $goods.find('.goods-yj').find('span').text().trim(),
-          url: '',
-          discountUrl: '',
-        });
-      });
+    [TSELL.QUERY_LIST_SUCCESS](state, { url, list }) {
       state.url = url;
-      state.html = html;
+      state.goods = list;
     },
-    [TSELL.QUERY_ITEM_SUCCESS](state, { p, html }) {
-      const re = /优惠券:[\s\S]*?href="([^"]+)"[\s\S]*?下单链接:[\s\S]*?href="([^"]+)"/gi;
-      const r = re.exec(html);
-      if (r) {
-        p.discountUrl = r[1];
-        p.url = r[2];
-        p.uid = p.url.replace(/.*id=/, '').replace(/\D.*/, '');
-      }
+    [TSELL.QUERY_ITEM_SUCCESS](state, { p, item }) {
+      Object.assign(p, item);
     },
   },
 };

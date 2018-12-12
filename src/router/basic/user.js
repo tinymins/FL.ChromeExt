@@ -13,9 +13,9 @@ export default [
     meta: { parent: 'user', nav: 'user' },
     redirect: { name: 'user_index' },
     components: {
-      header: () => import('@/components/header.vue'),
-      main: () => import('@/components/main.vue'),
-      footer: () => import('@/components/footer.vue'),
+      header: () => import('@/views/common/header/index.vue'),
+      main: () => import('@/views/common/main/index.vue'),
+      footer: () => import('@/views/common/footer/index.vue'),
     },
     children: [
       {

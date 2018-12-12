@@ -12,9 +12,9 @@ export default [
     meta: { parent: 'index', nav: 'index' },
     redirect: { name: 'index' },
     components: {
-      header: () => import('@/components/header.vue'),
-      main: () => import('@/components/main.vue'),
-      footer: () => import('@/components/footer.vue'),
+      header: () => import('@/views/common/header/index.vue'),
+      main: () => import('@/views/common/main/index.vue'),
+      footer: () => import('@/views/common/footer/index.vue'),
     },
     children: [
       {
@@ -29,9 +29,9 @@ export default [
     path: '*',
     name: '404',
     components: {
-      header: () => import('@/components/header.vue'),
+      header: () => import('@/views/common/header/index.vue'),
       main: () => import('@/views/index/404.vue'),
-      footer: () => import('@/components/footer.vue'),
+      footer: () => import('@/views/common/footer/index.vue'),
     },
   },
 ];

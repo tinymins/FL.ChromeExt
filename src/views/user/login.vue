@@ -55,18 +55,11 @@ export default {
         account: this.form.account,
         password: this.form.password,
       }).then(() => {
-        this.getUser().then(() => {
-          if (this.$route.query.redirect) {
-            this.$router.push({ path: this.$route.query.redirect });
-          } else {
-            this.$router.push({ name: 'user_index' });
-          }
-        });
         this.success = true;
         this.statusMsg = '登录成功';
-      }).catch((errMsg) => {
+      }).catch((err) => {
         this.success = false;
-        this.statusMsg = errMsg.toString();
+        this.statusMsg = err.response.data.errmsg.toString();
       });
     },
   },
@@ -74,5 +67,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../styles/views/user/login.scss';
+@import '~styles/views/user/login.scss';
 </style>

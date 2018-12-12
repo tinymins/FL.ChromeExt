@@ -1,0 +1,27 @@
+/*
+ * This file is part of vue-boilerplate.
+ * @link     : https://zhaiyiming.com/
+ * @author   : Emil Zhai (root@derzh.com)
+ * @modifier : Emil Zhai (root@derzh.com)
+ * @copyright: Copyright (c) 2018 TINYMINS.
+ */
+
+.nav-wrapper {
+  background-color: #eef1f6;
+}
+
+.nav {
+  display: flex;
+  margin: 0 auto;
+  padding: 0 20px;
+
+  &-menu {
+    flex: 1;
+  }
+
+  &-user {
+    font-size: 20px;
+    line-height: 60px;
+    margin-right: 20px;
+  }
+}

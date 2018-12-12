@@ -10,7 +10,7 @@ npm start
 OSX:
 
 ```shell
-open -a Google\ Chrome --args --disable-web-security --user-data-dir
+open -a "Google Chrome" --args --disable-web-security --user-data-dir
 ```
 
 WINDOWS:

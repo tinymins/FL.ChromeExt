@@ -1,0 +1,46 @@
+/**
+ * This file is part of vue-boilerplate.
+ * @link     : https://zhaiyiming.com/
+ * @author   : Emil Zhai (root@derzh.com)
+ * @modifier : Emil Zhai (root@derzh.com)
+ * @copyright: Copyright (c) 2018 TINYMINS.
+ */
+@import './utils/reset.scss';
+
+body,
+html {
+  color: #000000;
+  background: #f5f5f5;
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", sans-serif;
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  * {
+    outline: 0;
+    // outline: 1PX solid cyan !important;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  textarea {
+    border: none;
+    resize: none;
+  }
+}
+
+body.mobile {
+  user-select: none;
+
+  [allow-user-select] {
+    -webkit-touch-callout: initial;
+    -webkit-user-select: initial;
+    -khtml-user-select: initial;
+    -moz-user-select: initial;
+    -ms-user-select: initial;
+    user-select: initial;
+  }
+}

@@ -8,7 +8,7 @@
             :index="tab.route"
             :route="{ name: tab.route }"
           >
-            <router-link :to="tab.route" style="text-decoration: none">{{ tab.name }}</router-link>
+            <router-link :to="tab.route" style="text-decoration: none;">{{ tab.name }}</router-link>
           </el-menu-item>
         </el-menu>
         <div class="nav-user">{{ user ? user.name : '请先登录' }}</div>
@@ -60,23 +60,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.nav-wrapper {
-  background-color: #eef1f6;
-}
-
-.nav {
-  display: flex;
-  margin: 0 auto;
-  max-width: 960px;
-
-  &-menu {
-    flex: 1;
-  }
-
-  &-user {
-    font-size: 20px;
-    line-height: 60px;
-    margin-right: 20px;
-  }
-}
+@import '~styles/views/common/header/index.scss';
 </style>

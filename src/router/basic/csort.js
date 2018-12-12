@@ -12,9 +12,9 @@ export default [
     path: '/csort',
     meta: { parent: 'csort', nav: 'csort', title: '超级排序', requiresAuth: true },
     components: {
-      header: () => import('@/components/header.vue'),
+      header: () => import('@/views/common/header/index.vue'),
       main: () => import('@/views/csort/index.vue'),
-      footer: () => import('@/components/footer.vue'),
+      footer: () => import('@/views/common/footer/index.vue'),
     },
   },
 ];

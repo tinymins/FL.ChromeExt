@@ -5,7 +5,7 @@
   </div>
 </template>
 <script>
-import { popupWindow } from '@/utils/util';
+import { popupWindow } from '@/utils/chrome-ext';
 import { Button } from 'element-ui';
 
 export default {
@@ -24,5 +24,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../styles/views/popup/index.scss';
+@import '~styles/views/popup/index.scss';
 </style>
