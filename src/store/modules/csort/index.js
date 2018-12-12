@@ -8,6 +8,7 @@
 /* eslint no-param-reassign: "off" */
 
 import * as api from '@/store/api/csort';
+import * as apiTuan from '@/store/api/tuan';
 import { CSORT } from '@/store/types';
 import { showLoading, hideLoading } from '@/store/utils';
 
@@ -34,7 +35,12 @@ export default {
             }
             const iid = list.shift();
             const subLoading = showLoading({ text: `加载商品 ${iid}` });
-            api.queryList(iid).then((res) => {
+            apiTuan.getItemList({
+              iid,
+              state: 1,
+              category: 0,
+              subCategoryid: 0,
+            }).then((res) => {
               commit(CSORT.QUERY_SUCCESS, { list: res.data.data });
               next();
             }).catch(() => {
