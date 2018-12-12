@@ -24,7 +24,7 @@ export const getItemList = ({
   createUser = '', // 编辑
   shopid = '', // 所属商家
   youngName = '', // 青春版副标题
-  sellout = '', // 售罄
+  soldOut = '', // 售罄
   state = '', // 状态
   asortFrom = '', // 排序值
   asortTo = '', // 排序值
@@ -48,7 +48,7 @@ export const getItemList = ({
     create_user: createUser,
     shopid,
     young_name: youngName,
-    sellout,
+    sellout: soldOut,
     state,
     asort_from: asortFrom,
     asort_to: asortTo,
@@ -67,24 +67,24 @@ export const getItemList = ({
         iid: $item.attr('data-numiid'),
         id: $tds.eq(1).text(),
         createTime: $tds.eq(2).html().replace(/<.*/ig, '').trim(),
-        prepareTime: $tds.eq(2).html().replace(/.*>/ig, '').trim(),
-        launchTime: $tds.eq(3).html().replace(/<.*/ig, '').trim(),
-        discontinueTime: $tds.eq(3).html().replace(/.*>/ig, '').trim(),
-        name: $tds.eq(4).text(),
+        readyTime: $tds.eq(2).html().replace(/.*>/ig, '').trim(),
+        startTime: $tds.eq(3).html().replace(/<.*/ig, '').trim(),
+        endTime: $tds.eq(3).html().replace(/.*>/ig, '').trim(),
+        title: $tds.eq(4).text(),
         url: $tds.eq(4).children('a').attr('href'),
-        subName: $tds.eq(5).text(),
+        youngName: $tds.eq(5).text(),
         thumb: $tds.eq(6).find('img').attr('src'),
         image: $tds.eq(6).find('img').attr('data-original'),
         priceA: $tds.eq(7).html().replace(/<.*/ig, '').trim(),
         priceB: $tds.eq(7).html().replace(/.*>/ig, '').trim(),
         price: $tds.eq(8).text(),
         category: $tds.eq(9).text(),
-        via: $tds.eq(10).text(),
+        shopName: $tds.eq(10).text(),
         soldOut: $tds.eq(11).text().trim(),
-        editor: $tds.eq(12).text(),
+        createUser: $tds.eq(12).text(),
         state: $tds.eq(13).text(),
-        superSort: $tds.eq(14).find('input').attr('value'),
-        newerSort: $tds.eq(15).find('input').attr('value'),
+        csort: $tds.eq(14).find('input').attr('value'),
+        bsort: $tds.eq(15).find('input').attr('value'),
       });
     });
     res.data = { errcode: 0, errmsg: '', data: list };

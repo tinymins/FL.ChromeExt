@@ -68,8 +68,8 @@ export default {
             return;
           }
           const p = list.shift();
-          const subLoading = showLoading({ text: `修改商品 [${p.name}](${p.iid}) 超级排序为 ${p.newSuperSort}` });
-          api.submit(p.id, p.newSuperSort).then(() => {
+          const subLoading = showLoading({ text: `修改商品 [${p.name}](${p.iid}) 超级排序为 ${p.newCsort}` });
+          api.submit(p.id, p.newCsort).then(() => {
             commit(CSORT.SUBMIT_SUCCESS, p);
             next();
           }).catch(() => {
@@ -104,7 +104,7 @@ export default {
     [CSORT.SUBMIT_SUCCESS](state, p) {
       state.goods.filter(c => c.id === p.id).forEach((c) => {
         c.submitting = false;
-        c.superSort = p.newSuperSort;
+        c.csort = p.newCsort;
       });
     },
     [CSORT.SUBMIT_FAILURE](state, p) {
