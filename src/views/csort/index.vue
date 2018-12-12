@@ -78,6 +78,7 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 import { Input, Button, Table, TableColumn, Alert } from 'element-ui';
+import * as storage from '@/utils/storage';
 
 export default {
   components: {
@@ -89,8 +90,8 @@ export default {
   },
   data() {
     return {
-      iidsText: '',
-      csortText: '',
+      iidsText: storage.getLocal('csort:iidsText') || '',
+      csortText: storage.getLocal('csort:csortText') || '',
     };
   },
   computed: {
@@ -137,6 +138,14 @@ export default {
     },
     hasSubmitable() {
       return this.goodsDraft.filter(c => c.newCsort !== '').length === 0;
+    },
+  },
+  watch: {
+    iidsText(iidsText) {
+      storage.setLocal('csort:iidsText', iidsText);
+    },
+    csortText(csortText) {
+      storage.setLocal('csort:csortText', csortText);
     },
   },
   methods: {
