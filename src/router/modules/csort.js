@@ -5,15 +5,17 @@
  * @modifier : Emil Zhai (root@derzh.com)
  * @copyright: Copyright (c) 2018 TINYMINS.
  */
+import { AUTH_STATE } from '@/config';
 
 export default [
   {
-    name: 'tsell',
-    path: '/tsell',
-    meta: { parent: 'tsell', nav: 'tsell', title: '实时榜单' },
+    name: 'csort',
+    path: '/csort',
+    meta: { tabbar: 'fl/csort', title: '超级排序', auth: AUTH_STATE.LOGGED_IN },
     components: {
+      static: () => import('@/views/common/static/index.vue'),
       header: () => import('@/views/common/header/index.vue'),
-      main: () => import('@/views/tsell/index.vue'),
+      main: () => import('@/views/csort/index.vue'),
       footer: () => import('@/views/common/footer/index.vue'),
     },
   },

@@ -1,20 +1,20 @@
 ﻿{
   "manifest_version": 2,
-
   "name": "FL Opt",
+  "short_name": "FL Opt",
   "description": "让FL后台网页更好用",
   "version": "0.1.1",
   "browser_action": {
     "default_popup": "index.html#/popup",
     "default_title": "FL Opt - 爱月的宅"
   },
-  "web_accessible_resources": ["scripts.insert/*"],
 
   "permissions": [
+    "activeTab",
     "webRequest",
     "webRequestBlocking",
-    "activeTab",
     "http://trace.51fanli.com/",
     "http://www.dataoke.com/top_sell/"
-  ]
+  ],
+  "web_accessible_resources": ["scripts.insert/*"]
 }

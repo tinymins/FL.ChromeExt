@@ -9,19 +9,18 @@
 /* eslint no-console: ["warn", { allow: ["warn", "error"] }] */
 
 import axios from 'axios';
-import { BASE_API_URL, SLOW_API_TIME, MAX_API_RETRY_COUNT, MULTI_REQUEST_URL, CAMELIZE_API_RESPONSE } from '@/config';
-import { singletonPromise } from '@/utils/util';
+import { BASE_API_URL, SLOW_API_TIME, MAX_API_RETRY_COUNT, MULTI_REQUEST_URL, CAMELIZE_API_RESPONSE, AUTH_STATE_LIST } from '@/config';
+import { singletonPromise, navigateLocation } from '@/utils/util';
 import { isDevelop } from '@/utils/environment';
-import { clearAuthorization, navgateRegisterRoute } from '@/utils/authorization';
-import { camelize } from '@/utils/transfer';
+import { checkAuthorizeRedirect, getAuthorization } from '@/utils/authorization';
+import { camelize, parseNavLocation } from '@/utils/transfer';
 import store from '@/store';
-
-const showToast = ({ text, time = 2000, type = 'warn' }) => store && store.commit('common/COMMON_PUSH_TOAST', { text, time, type });
-const showMessageBox = (title, content) => store && store.commit('common/COMMON_PUSH_MESSAGE', { title, content });
+import { showDialog, showLoading, hideLoading, showToast } from '@/store/utils';
+import router from '@/router';
 
 const getRequestId = config => `api:axios#${config.requestCount}`;
-const showRequestLoading = (config, text) => store && store.commit('common/COMMON_SHOW_LOADING', { id: getRequestId(config), text });
-const hideRequestLoading = config => store && store.commit('common/COMMON_HIDE_LOADING', { id: getRequestId(config) });
+const showRequestLoading = (config, text) => showLoading({ id: getRequestId(config), text });
+const hideRequestLoading = config => hideLoading({ id: getRequestId(config) });
 
 export const http = axios.create({
   baseURL: BASE_API_URL,
@@ -89,7 +88,10 @@ const autoHideRequestLoading = (config) => {
 if (isDevelop()) {
   window.onerror = (msg, url, lineNo, columnNo, error) => {
   // window.onerror = (msg, url, lineNo, columnNo, error) => {
-    showMessageBox('JavaScript catch', `[MSG]:${msg} [URL]${url} [POS]${lineNo},${columnNo} [ERROR]:${error}`);
+    showDialog({
+      title: 'JavaScript catch',
+      content: `[MSG]:${msg} [URL]${url} [POS]${lineNo},${columnNo} [ERROR]:${error}`,
+    });
     return false;
   };
 }
@@ -99,12 +101,6 @@ export const onRequest = (req) => {
   if (req.interceptors !== false) {
     req.interceptors = true;
   }
-  if (req.maxRetry === undefined) {
-    req.maxRetry = MAX_API_RETRY_COUNT;
-  }
-  if (!req.retryCount) {
-    req.retryCount = 0;
-  }
   requestCount += 1;
   req.requestCount = requestCount;
   autoShowRequestLoading(req);
@@ -113,9 +109,13 @@ export const onRequest = (req) => {
 
 export const onRequestError = (error) => {
   autoHideRequestLoading(error.config);
-  if (error.config.retryCount < error.config.maxRetry) {
-    error.config.retryCount += 1;
-    showToast({ text: 'Network error, reconnceting...' });
+  if (error.config.maxRetry > 0) {
+    error.config.maxRetry -= 1;
+    showToast({
+      text: '网络错误，正在尝试重新连接…',
+      time: 2000,
+      type: 'warn',
+    });
     return http.request(error.config);
   }
   return Promise.reject(error);
@@ -126,58 +126,94 @@ export const onResponse = (res) => {
   if (res.data && CAMELIZE_API_RESPONSE) {
     camelize(res.data, { modify: true });
   }
+  const dialog = res.data.dialog;
+  if (dialog) {
+    showDialog({
+      title: dialog.title,
+      content: dialog.message,
+      buttons: dialog.buttons.map(item => ({
+        label: item.label,
+        action: () => {
+          if (item.go) {
+            const location = parseNavLocation(item.go);
+            if (location) {
+              navigateLocation(location, router);
+            }
+          }
+        },
+        primary: item.primary,
+      })),
+    });
+  }
+  const toast = res.data.toast;
+  if (toast) {
+    showToast({
+      text: toast.message,
+      time: toast.time || 2000,
+      type: toast.type || 'warn',
+    });
+  }
   return Promise.resolve(res);
 };
 
-const onResponseErrorCode = ({ response, config, stack: errorStack = '' }) => {
-  if (response.status === 401) {
-    if (!config.ignoreAuth) {
-      clearAuthorization(true);
+const onResponseErrorCode = async ({ response, config, stack: errorStack = '' }) => {
+  const isAuthStatus = !config.ignoreAuth && AUTH_STATE_LIST.includes(response.data.errcode);
+  if (isAuthStatus) {
+    const status = await getAuthorization('local');
+    if (status !== response.data.errcode) {
+      await getAuthorization('reload');
     }
-  } else if (response.status === 448) {
-    if (!config.ignoreAuth) {
-      navgateRegisterRoute();
+    const { route } = router.resolve(store.state.common.route.to.fullPath);
+    const redirect = await checkAuthorizeRedirect(route);
+    if (redirect) {
+      router.push(redirect);
+      return;
     }
-  } else if (!config.silent && config.showError !== false) {
-    if (response.status >= 500) {
-      const errmsg = (response && response.data && response.data.errmsg)
+  }
+  const errcode = response.data.errcode;
+  const silent = config.silent || config.showError === false
+    || (config.ignoreAuth && AUTH_STATE_LIST.includes(errcode))
+    || config.errcodeExpected.includes(errcode);
+  if (!silent) {
+    if (errcode >= 500) {
+      const errmsg = response && response.data && response.data.errmsg
         ? response.data.errmsg
         : errorStack;
-      showMessageBox(`服务器错误: ${response.status}`, errmsg || '找不到错误信息');
-    } else if (response.status >= 400) {
+      showDialog({ title: `服务器错误 ${errcode}`, content: errmsg || '未知错误' });
+    } else if (errcode >= 400) {
       if (isDevelop()) {
-        showMessageBox(`请求失败: ${response.status}`, response.data.errmsg || '找不到错误信息');
+        showDialog({ title: `请求失败 ${errcode}`, content: response.data.errmsg || 'No errmsg.' });
       } else {
-        showToast({ text: response.data.errmsg || '未知错误', position: 'center' });
+        showToast({ text: response.data.errmsg || '未知错误', time: 2000, type: 'warn', position: 'center' });
       }
     } else {
-      showMessageBox(`异常: ${response.status}`, '未知Response错误');
+      showDialog({ title: `异常 ${errcode}`, content: '返回数据未知错误' });
     }
   }
 };
 
 export const onResponseError = (error) => {
   autoHideRequestLoading(error.config);
-  if (!error.response) {
-    if (error.config.retryCount < error.config.maxRetry) {
-      error.config.retryCount += 1;
-      showToast({ text: '网络错误，正在重连...' });
-      return http.request(error.config);
-    }
-    if (isDevelop()) {
-      showMessageBox(error.message, error.stack);
-    } else if (!error.config.silent && error.config.showError !== false) {
-      if (error.code === 'ECONNABORTED') {
-        showToast({ text: '网络错误!' });
-      } else {
-        showToast({ text: error.message });
-      }
-    }
-  } else {
+  if (error.response) {
     if (error.response.data && CAMELIZE_API_RESPONSE) {
       camelize(error.response.data, { modify: true });
     }
     onResponseErrorCode(error);
+  } else {
+    if (error.config.maxRetry > 0) {
+      error.config.maxRetry -= 1;
+      showToast({ text: '网络错误，正在尝试重新连接…', time: 2000, type: 'warn' });
+      return http.request(error.config);
+    }
+    if (isDevelop()) {
+      showDialog({ title: error.message, content: error.stack });
+    } else if (!error.config.silent && error.config.showError) {
+      if (error.code === 'ECONNABORTED') {
+        showToast({ text: '网络错误，数据加载失败！', time: 2000, type: 'warn' });
+      } else {
+        showToast({ text: error.message, time: 2000, type: 'warn' });
+      }
+    }
   }
   return Promise.reject(error);
 };
@@ -229,13 +265,16 @@ if (MULTI_REQUEST_URL) {
     }
     const modal = infos.some(p => p.options.modal);
     const silent = !infos.some(p => !p.options.silent);
-    const showMask = infos.some(p => p.options.showMask !== false);
-    const showError = infos.some(p => p.options.showError !== false);
+    const showMask = infos.some(p => p.options.showMask);
+    const showError = infos.some(p => p.options.showError);
+    const maxRetry = Math.max(...infos.map(p => p.options.maxRetry));
+    const ignoreAuth = !infos.some(p => !p.options.ignoreAuth);
+    const errcodeExpected = [].concat(...infos.map(p => p.options.errcodeExpected)).filter(_ => _);
     raw.POST(MULTI_REQUEST_URL, infos.map(p => ({
       method: p.method,
       uri: p.url,
       data: p.params,
-    })), { modal, silent, showMask, showError }).then((response) => {
+    })), { modal, silent, showMask, showError, maxRetry, ignoreAuth, errcodeExpected }).then((response) => {
       response.data.data.forEach((res, index) => {
         const info = infos[index];
         const status = res.errcode === 0 ? 200 : res.errcode;
@@ -270,6 +309,10 @@ if (MULTI_REQUEST_URL) {
     multiRequest({ method, url, params, options, extra }));
 }
 
+// Auto timestamp // must after request merge and null/undefined params removed
+hookMethods(raw => (url, params, options, ...extra) =>
+  raw(url, params instanceof FormData ? params : Object.assign({ _: (new Date()).valueOf() }, params), options, ...extra));
+
 // Merge same requests which has the same url and params.
 hookMethods(raw => singletonPromise(raw, (url, params) => (params instanceof FormData ? null : { url, params })));
 
@@ -280,7 +323,7 @@ hookMethods(raw => singletonPromise(raw, (url, params) => (params instanceof For
     }
     const data = {};
     Object.keys(obj).forEach((k) => {
-      if (obj[k] !== null && obj[k] !== undefined) {
+      if (obj[k] !== null && obj[k] !== void 0) {
         data[k] = obj[k];
       }
     });
@@ -290,12 +333,26 @@ hookMethods(raw => singletonPromise(raw, (url, params) => (params instanceof For
     raw(url, params instanceof FormData ? params : removeObjectNull(params), ...extra));
 }
 
-// Auto timestamp
-hookMethods(raw => (url, params, options, ...extra) =>
-  raw(url, params instanceof FormData ? params : Object.assign({ _: (new Date()).valueOf() }, params), options, ...extra));
-
-// Fill all arguments
-hookMethods(raw => (url, params = {}, options = {}, ...extra) => raw(url, params, options, ...extra));
+// Fill all arguments, return only data
+// Must be the last hook, otherwise params and return values will get wrong order
+hookMethods(raw => (url, params = {}, options = {}, ...extra) => new Promise((resolve, reject) => {
+  raw(url, params, Object.assign({
+    modal: false,
+    silent: false,
+    showMask: true,
+    showError: true,
+    maxRetry: MAX_API_RETRY_COUNT,
+    ignoreAuth: false,
+    errcodeExpected: [],
+  }, options), ...extra)
+    .then(res => resolve(res.data))
+    .catch((err) => {
+      if (err.response) {
+        err.response = err.response.data;
+      }
+      reject(err);
+    });
+}));
 
 http.interceptors.request.use(onRequest, onRequestError);
 http.interceptors.response.use(onResponse, onResponseError);

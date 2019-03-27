@@ -7,14 +7,14 @@
  */
 
 .main {
-  padding: 0 20px;
+  padding: 0 40px;
 }
 
 .query {
   display: flex;
 
   .textarea {
-    margin: 10px 5px;
+    margin: 20px 10px;
   }
 
   &-btn {
@@ -22,17 +22,17 @@
   }
 
   &-mismatch-alert {
-    margin-bottom: 10px;
+    margin-bottom: 20px;
   }
 }
 
 .list {
-  margin-top: 20px;
+  margin-top: 40px;
 }
 
 .submit {
   display: flex;
-  margin: 5px 0 20px 0;
+  margin: 10px 0 40px 0;
 
   &-btn {
     flex: 1;

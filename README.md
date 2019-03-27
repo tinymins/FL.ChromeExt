@@ -16,7 +16,7 @@ open -a "Google Chrome" --args --disable-web-security --user-data-dir
 WINDOWS:
 
 ```bat
-chrome.exe --disable-web-security
+chrome.exe --disable-web-security --user-data-dir
 ```
 
 ## 更新日志

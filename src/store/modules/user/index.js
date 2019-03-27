@@ -7,23 +7,23 @@
  */
 /* eslint no-param-reassign: ["error", { "props": false }] */
 
-import * as api from '@/store/api/user';
-import { USER } from '@/store/types';
 import router from '@/router';
-import store from '@/store';
-import { isInWechat, isLocalhost } from '@/utils/environment';
-import { getAuthorizeURL } from '@/utils/authorization';
+import { USER } from '@/store/types';
+import * as api from '@/store/api/user';
 import { showLoading, hideLoading } from '@/store/utils';
+import { camelize } from '@/utils/transfer';
+import { checkAuthorizeRedirect } from '@/utils/authorization';
+import { AUTH_STATE } from '@/config/index';
 
 export default {
   namespaced: true,
   state: {
     user: null,
-    status: 401,
+    status: AUTH_STATE.GUEST,
   },
   getters: {
     user: (state) => {
-      if (state.user && Object.keys(state.user).length !== 0) {
+      if (state.status === AUTH_STATE.LOGGED_IN && state.user && Object.keys(state.user).length !== 0) {
         return state.user;
       }
       return null;
@@ -40,7 +40,7 @@ export default {
             if (redirect) {
               router.push({ path: redirect });
             } else {
-              router.push({ name: 'user_index' });
+              router.push({ name: 'index' });
             }
             resolve();
           });
@@ -49,47 +49,54 @@ export default {
         });
       });
     },
-    [USER.LOGOUT]({ dispatch }) {
+    [USER.LOGOUT]({ commit, rootState }) {
       return new Promise((resolve, reject) => {
         const loading = showLoading({ text: '努力退出登录' });
-        api.logout().then(() => {
-          dispatch(USER.CLEAR);
+        api.logout().then(async () => {
+          commit(USER.LOGOUT);
+          const { route } = router.resolve(rootState.common.route.to.fullPath);
+          const redirect = await checkAuthorizeRedirect(route);
+          if (redirect) {
+            router.push(redirect);
+          }
           resolve();
         }).catch(reject).finally(() => {
           hideLoading({ id: loading });
         });
       });
     },
-    [USER.GET]({ commit, state }, { reload, refresh, strict = true } = {}) {
+    [USER.GET]({ commit, state }, { reload, refresh, strict = true, silent } = {}) {
       if (refresh ? state.user : reload || !state.user) {
-        return new Promise((resolve) => {
-          const loading = showLoading({ text: '获取当前登录状态' });
-          api.getUser(strict).then((res) => {
-            commit(USER.GET, {
-              status: res.data.data ? res.status : 401,
-              user: res.data.data || {},
-            });
-            resolve();
-          }).catch((err) => {
-            commit(USER.GET, { status: err.response.status });
-            resolve();
-          }).finally(() => {
-            hideLoading({ id: loading });
+        // window.__INITIAL_STATE__ = {"errcode":401,"errmsg":"未授权"}; // 测试数据
+        if (typeof window.__INITIAL_STATE__ === 'object') {
+          const res = camelize(window.__INITIAL_STATE__);
+          commit(USER.GET, {
+            status: res.errcode,
+            user: res.data || {},
           });
-        });
-      }
-      return Promise.resolve();
-    },
-    [USER.CLEAR]({ commit, rootState: { route: { fullPath } } }, { isLogout = false, requiresAuth = false } = {}) {
-      commit(isLogout ? USER.LOGOUT : USER.CLEAR);
-      const route = store.state.common.route.to || router.resolve(fullPath).route;
-      if (requiresAuth || route.matched.some(record => record.meta.requiresAuth)) {
-        if (!isLocalhost() && isInWechat() && getAuthorizeURL('wx', 'login')) {
-          window.location = getAuthorizeURL('wx', 'login', route);
+          delete window.__INITIAL_STATE__;
         } else {
-          router.replace({
-            name: 'user_login',
-            query: { redirect: route.fullPath },
+          return new Promise((resolve, reject) => {
+            const loading = showLoading({ text: '获取当前登录状态' });
+            api.getUser(strict, silent).then((res) => {
+              commit(USER.GET, {
+                status: res.data ? res.errcode : AUTH_STATE.GUEST,
+                user: res.data || {},
+              });
+              resolve();
+            }).catch((err) => {
+              if (err && err.response) {
+                commit(USER.GET, {
+                  status: err.response.errcode,
+                  user: err.response.data || {},
+                });
+                resolve();
+              } else {
+                reject(err);
+              }
+            }).finally(() => {
+              hideLoading({ id: loading });
+            });
           });
         }
       }
@@ -103,11 +110,7 @@ export default {
     },
     [USER.LOGOUT](state) {
       state.user = {};
-      state.status = 401;
-    },
-    [USER.CLEAR](state) {
-      state.user = null;
-      state.status = 401;
+      state.status = AUTH_STATE.GUEST;
     },
   },
 };

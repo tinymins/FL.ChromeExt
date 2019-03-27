@@ -32,7 +32,7 @@ export default {
           api.queryList(params.url).then((res) => {
             commit(TSELL.QUERY_LIST_SUCCESS, {
               url: params.url,
-              list: res.data.data,
+              list: res.data,
             });
             resolve();
           }).catch(reject).finally(() => {
@@ -56,7 +56,7 @@ export default {
             const p = list.shift();
             const subLoading = showLoading({ text: `加载商品 ${p.name}` });
             api.queryItem(p.id).then((res) => {
-              commit(TSELL.QUERY_ITEM_SUCCESS, { p, item: res.data.data });
+              commit(TSELL.QUERY_ITEM_SUCCESS, { p, item: res.data });
               next();
             }).catch(next).finally(() => {
               hideLoading({ id: subLoading });

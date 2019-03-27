@@ -8,7 +8,7 @@
 /* eslint-disable id-match */
 /* eslint-disable camelcase */
 import cheerio from 'cheerio';
-import { http } from '@/store/api';
+import { http } from './driver';
 
 export const getItemList = ({
   ctimeFrom = '', // 创建时间
@@ -57,26 +57,26 @@ export const getItemList = ({
     is_young: isYoung,
     is_hot_coupon: isHotCoupon,
     p: page,
-  }).then((res) => {
+  }).then((html) => {
     const list = [];
-    const $ = cheerio.load(res.data);
+    const $ = cheerio.load(html);
     $('.J-main-row-active').each((i, el) => {
       const $item = $(el);
       const $tds = $item.find('td');
       list.push({
         iid: $item.attr('data-numiid'),
         id: $tds.eq(1).text(),
-        createTime: $tds.eq(2).html().replace(/<.*/ig, '').trim(),
-        readyTime: $tds.eq(2).html().replace(/.*>/ig, '').trim(),
-        startTime: $tds.eq(3).html().replace(/<.*/ig, '').trim(),
-        endTime: $tds.eq(3).html().replace(/.*>/ig, '').trim(),
+        createTime: $tds.eq(2).html().replace(/<.*/igu, '').trim(),
+        readyTime: $tds.eq(2).html().replace(/.*>/igu, '').trim(),
+        startTime: $tds.eq(3).html().replace(/<.*/igu, '').trim(),
+        endTime: $tds.eq(3).html().replace(/.*>/igu, '').trim(),
         title: $tds.eq(4).text(),
         url: $tds.eq(4).children('a').attr('href'),
         youngName: $tds.eq(5).text(),
         thumb: $tds.eq(6).find('img').attr('src'),
         image: $tds.eq(6).find('img').attr('data-original'),
-        priceA: $tds.eq(7).html().replace(/<.*/ig, '').trim(),
-        priceB: $tds.eq(7).html().replace(/.*>/ig, '').trim(),
+        priceA: $tds.eq(7).html().replace(/<.*/igu, '').trim(),
+        priceB: $tds.eq(7).html().replace(/.*>/igu, '').trim(),
         price: $tds.eq(8).text(),
         category: $tds.eq(9).text(),
         shopName: $tds.eq(10).text(),
@@ -87,7 +87,7 @@ export const getItemList = ({
         bsort: $tds.eq(15).find('input').attr('value'),
       });
     });
-    res.data = { errcode: 0, errmsg: '', data: list };
+    const res = { errcode: 0, errmsg: '', data: list };
     resolve(res);
   }).catch(reject);
 });

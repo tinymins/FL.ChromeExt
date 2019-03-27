@@ -11,17 +11,19 @@
 }
 
 .nav {
-  display: flex;
   margin: 0 auto;
-  padding: 0 20px;
+  display: flex;
 
   &-menu {
     flex: 1;
   }
 
   &-user {
-    font-size: 20px;
-    line-height: 60px;
-    margin-right: 20px;
+    padding-right: 40px;
+    font-size: 32px;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 }

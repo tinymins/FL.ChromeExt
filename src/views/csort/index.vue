@@ -4,17 +4,17 @@
       <el-input
         class="textarea"
         type="textarea"
-        :autosize="{ minRows: 5, maxRows: 20}"
+        :autosize="{ minRows: 5, maxRows: 20 }"
         placeholder="请输入商品ID列表 每行一个"
-        v-model="iidsText">
-      </el-input>
+        v-model="iidsText"
+      ></el-input>
       <el-input
         class="textarea"
         type="textarea"
-        :autosize="{ minRows: 5, maxRows: 20}"
+        :autosize="{ minRows: 5, maxRows: 20 }"
         placeholder="超级排序列表 与左侧按行对应 连续相同用空格隔开 如 “100 3” 表示连续三个 100"
-        v-model="csortText">
-      </el-input>
+        v-model="csortText"
+      ></el-input>
     </div>
     <div class="query">
       <el-alert
@@ -33,9 +33,9 @@
     <div class="list">
       <el-table :data="goodsDraft" class="list-table">
         <el-table-column label="图片" width="80">
-          <template slot-scope="scope">
-            <img :src="scope.row.image" style="max-width: 50px; max-height: 50px;">
-          </template>
+          <div slot-scope="scope" style="width: 40px; height: 40px; text-align: center;">
+            <img :src="scope.row.image" style="max-width: 40px; height: 40px;">
+          </div>
         </el-table-column>
         <el-table-column prop="iid" label="商品ID" width="180">
         </el-table-column>
@@ -79,6 +79,7 @@
 import { mapActions, mapState } from 'vuex';
 import { Input, Button, Table, TableColumn, Alert } from 'element-ui';
 import * as storage from '@/utils/storage';
+import { CSORT } from '@/store/types';
 
 export default {
   components: {
@@ -97,12 +98,12 @@ export default {
   computed: {
     ...mapState('csort', ['goods', 'submitting']),
     iids() {
-      return this.iidsText.split('\n').filter(c => c.replace(/\s+/).length !== 0);
+      return this.iidsText.split('\n').filter(c => c.replace(/\s+/u).length !== 0);
     },
     newCsorts() {
-      const sorts = this.csortText.split('\n').filter(c => c.replace(/\s+/).length !== 0);
+      const sorts = this.csortText.split('\n').filter(c => c.replace(/\s+/u).length !== 0);
       const realSorts = [];
-      const re = /(\d+)\s+(\d+)/;
+      const re = /(\d+)\s+(\d+)/u;
       sorts.forEach((s) => {
         const r = re.exec(s);
         if (r) {
@@ -150,8 +151,8 @@ export default {
   },
   methods: {
     ...mapActions('csort', {
-      csortQuery: 'CSORT_QUERY',
-      submitSort: 'CSORT_SUBMIT',
+      csortQuery: CSORT.QUERY,
+      submitSort: CSORT.SUBMIT,
     }),
     getRowIcon(row) {
       if (row.newCsort === '') {

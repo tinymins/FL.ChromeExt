@@ -11,7 +11,9 @@
             <router-link :to="tab.route" style="text-decoration: none;">{{ tab.name }}</router-link>
           </el-menu-item>
         </el-menu>
-        <div class="nav-user">{{ user ? user.name : '请先登录' }}</div>
+        <div class="nav-user">
+          <span>{{ user ? user.name : '请先登录' }}</span>
+        </div>
       </div>
     </div>
   </header>
@@ -20,6 +22,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import { Menu, MenuItem } from 'element-ui';
+import { USER } from '@/store/types';
 
 export default {
   components: {
@@ -27,7 +30,7 @@ export default {
     [MenuItem.name]: MenuItem,
   },
   asyncData({ store }) {
-    return store.dispatch('user/USER_GET');
+    return store.dispatch(`user/${USER.GET}`);
   },
   data() {
     const tabList = [
@@ -46,13 +49,13 @@ export default {
         this.$router.push({ name });
       },
       get() {
-        let active = this.$route.name;
-        Object.values(this.$route.matched).forEach((obj) => {
-          if (obj.meta.parent) {
-            active = obj.meta.parent;
+        let name = this.$route.name;
+        Object.values(this.$route.matched).forEach((r) => {
+          if (r.meta.tabbar) {
+            name = r.meta.tabbar.replace(/[^/]+\//u, '');
           }
         });
-        return active;
+        return name;
       },
     },
   },

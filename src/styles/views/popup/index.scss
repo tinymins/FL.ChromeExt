@@ -19,6 +19,7 @@
     margin: 0;
     flex: 1;
     border-radius: 0;
+    cursor: pointer;
 
     &:not(:first-child) {
       margin: 5px 0 0;

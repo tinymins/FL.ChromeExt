@@ -6,6 +6,7 @@
 <script>
 import { Button } from 'element-ui';
 import { mapActions } from 'vuex';
+import { USER } from '@/store/types';
 
 export default {
   components: {
@@ -13,8 +14,8 @@ export default {
   },
   methods: {
     ...mapActions('user', {
-      getUser: 'USER_GET',
-      apiLogout: 'USER_LOGOUT',
+      getUser: USER.GET,
+      apiLogout: USER.LOGOUT,
     }),
     logout() {
       this.apiLogout().then(() => {

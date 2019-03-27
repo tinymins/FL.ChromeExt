@@ -41,7 +41,7 @@ export default {
               category: 0,
               subCategoryid: 0,
             }).then((res) => {
-              commit(CSORT.QUERY_SUCCESS, { list: res.data.data });
+              commit(CSORT.QUERY_SUCCESS, { list: res.data });
               next();
             }).catch(() => {
               next();

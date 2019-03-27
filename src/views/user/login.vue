@@ -26,6 +26,7 @@
 <script>
 import { mapActions } from 'vuex';
 import { Input, Button, Form, FormItem, Alert } from 'element-ui';
+import { USER } from '@/store/types';
 
 export default {
   components: {
@@ -47,8 +48,8 @@ export default {
   },
   methods: {
     ...mapActions('user', {
-      login: 'USER_LOGIN',
-      getUser: 'USER_GET',
+      login: USER.LOGIN,
+      getUser: USER.GET,
     }),
     onSubmit() {
       this.login({
@@ -59,7 +60,9 @@ export default {
         this.statusMsg = '登录成功';
       }).catch((err) => {
         this.success = false;
-        this.statusMsg = err.response.data.errmsg.toString();
+        if (err && err.response && err.response.errmsg) {
+          this.statusMsg = err.response.errmsg.toString();
+        }
       });
     },
   },

@@ -7,9 +7,9 @@ module.exports = {
     'postcss-preset-env': {},
     'autoprefixer': {},
     // see https://www.npmjs.com/package/postcss-px2rem
-    // 'postcss-px2rem': {
-    //   remUnit: 42.5,
-    // },
+    'postcss-px2rem': {
+      remUnit: 47.5,
+    },
     // 'postcss-px-to-viewport': {
     //   'viewportWidth': 750,
     //   'viewportHeight': 1334,

@@ -8,12 +8,13 @@
 
 export default [
   {
-    name: 'csort',
-    path: '/csort',
-    meta: { parent: 'csort', nav: 'csort', title: '超级排序', requiresAuth: true },
+    name: 'tsell',
+    path: '/tsell',
+    meta: { tabbar: 'fl/tsell', title: '实时榜单' },
     components: {
+      static: () => import('@/views/common/static/index.vue'),
       header: () => import('@/views/common/header/index.vue'),
-      main: () => import('@/views/csort/index.vue'),
+      main: () => import('@/views/tsell/index.vue'),
       footer: () => import('@/views/common/footer/index.vue'),
     },
   },

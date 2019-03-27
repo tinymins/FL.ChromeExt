@@ -8,17 +8,17 @@
 /* eslint-disable id-match */
 /* eslint-disable camelcase */
 
-import { http } from '@/store/api';
+import { http } from './driver';
 
 export const submit = (id, sort) => new Promise((resolve, reject) => {
-  http.get(`Tuan/Tuanitem/ajaxSetAsort/id/${id}/asort/${sort}/sortkey/csort`).then((res) => {
-    const data = {
-      errcode: res.data.status === 1 ? 0 : 501,
-      errmsg: res.data.info,
-      data: res.data.data,
+  http.get(`Tuan/Tuanitem/ajaxSetAsort/id/${id}/asort/${sort}/sortkey/csort`).then((data) => {
+    const res = {
+      errcode: data.status === 1 ? 0 : 501,
+      errmsg: data.info,
+      data: data.data,
     };
     if (data.errcode) {
-      const err = new Error('login error');
+      const err = new Error('csort api error');
       err.response = res;
       reject(err);
     } else {

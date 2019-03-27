@@ -5,9 +5,9 @@ const basic = require('../.postcssrc');
 module.exports = merge(basic, {
   'plugins': {
     // see https://www.npmjs.com/package/postcss-px2rem
-    // 'postcss-px2rem': {
-    //   remUnit: 75,
-    // },
+    'postcss-px2rem': {
+      remUnit: 75,
+    },
     // 'postcss-px-to-viewport': {
     //   'viewportWidth': 750,
     //   'viewportHeight': 1334,

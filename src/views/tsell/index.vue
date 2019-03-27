@@ -23,6 +23,7 @@
 <script>
 import { mapActions, mapState, mapMutations } from 'vuex';
 import { Input, Button, Table, TableColumn, Alert } from 'element-ui';
+import { TSELL } from '@/store/types';
 
 export default {
   components: {
@@ -42,15 +43,15 @@ export default {
   },
   methods: {
     ...mapActions('tsell', {
-      apiQueryList: 'TSELL_QUERY_LIST',
-      apiQueryItems: 'TSELL_QUERY_ITEMS',
+      apiQueryList: TSELL.QUERY_LIST,
+      apiQueryItems: TSELL.QUERY_ITEMS,
     }),
     ...mapMutations('tsell', {
-      apiClearList: 'TSELL_QUERY_LIST',
-      apiDecodeList: 'TSELL_QUERY_LIST_SUCCESS',
+      apiClearList: TSELL.QUERY_LIST,
+      apiDecodeList: TSELL.QUERY_LIST_SUCCESS,
     }),
     queryList(...args) {
-      if (this.url.match(/^https?:\/\//)) {
+      if (this.url.match(/^https?:\/\//u)) {
         this.apiQueryList(...args);
       } else {
         this.apiClearList();

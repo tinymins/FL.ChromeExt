@@ -10,11 +10,9 @@ export default [
   {
     name: 'popup',
     path: '/popup',
-    meta: { parent: 'popup', nav: 'popup', title: 'FL 自动化' },
+    meta: { tabbar: 'popup/index', title: 'FL 自动化', progressBar: false },
     components: {
-      header: () => import('@/views/common/main/index.vue'),
       main: () => import('@/views/popup/index.vue'),
-      footer: () => import('@/views/common/main/index.vue'),
     },
   },
 ];

@@ -9,13 +9,14 @@
 export default [
   {
     path: '/',
-    meta: { parent: 'index', nav: 'index' },
-    redirect: { name: 'index' },
+    meta: { tabbar: 'fl/index' },
     components: {
+      static: () => import('@/views/common/static/index.vue'),
       header: () => import('@/views/common/header/index.vue'),
       main: () => import('@/views/common/main/index.vue'),
       footer: () => import('@/views/common/footer/index.vue'),
     },
+    redirect: { name: 'index' },
     children: [
       {
         name: 'index',
@@ -26,11 +27,12 @@ export default [
     ],
   },
   {
-    path: '*',
     name: '404',
+    path: '*',
     components: {
+      static: () => import('@/views/common/static/index.vue'),
       header: () => import('@/views/common/header/index.vue'),
-      main: () => import('@/views/index/404.vue'),
+      main: () => import('@/views/404'),
       footer: () => import('@/views/common/footer/index.vue'),
     },
   },
