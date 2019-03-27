@@ -7,7 +7,7 @@
  */
 /* eslint no-param-reassign: ["error", { "props": false }] */
 
-import * as api from '@/store/api/tsell';
+import * as api from '@/api/tsell';
 import { TSELL } from '@/store/types';
 import { showLoading, hideLoading } from '@/store/utils';
 

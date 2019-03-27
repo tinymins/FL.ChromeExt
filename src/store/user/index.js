@@ -8,8 +8,8 @@
 /* eslint no-param-reassign: ["error", { "props": false }] */
 
 import router from '@/router';
+import * as api from '@/api/user';
 import { USER } from '@/store/types';
-import * as api from '@/store/api/user';
 import { showLoading, hideLoading } from '@/store/utils';
 import { camelize } from '@/utils/transfer';
 import { checkAuthorizeRedirect } from '@/utils/authorization';

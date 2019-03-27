@@ -1,3 +1,4 @@
+
 /**
  * This file is part of vue-boilerplate.
  * @link     : https://zhaiyiming.com/
@@ -11,11 +12,11 @@ import { isDevelop } from '@/utils/environment';
 // globle and common
 // import * as getters   from './getters'
 // import * as actions   from './actions'
-// import * as mutations from '@/store/mutations';
-import commonModule from '@/store/modules/common';
-import userModule from '@/store/modules/user';
-import csortModule from '@/store/modules/csort';
-import tsellModule from '@/store/modules/tsell';
+// import * as mutations from './mutations';
+import commonModule from './common';
+import userModule from './user';
+import csortModule from './csort';
+import tsellModule from './tsell';
 
 Vue.use(Vuex);
 const store = new Vuex.Store({

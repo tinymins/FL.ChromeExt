@@ -7,8 +7,8 @@
  */
 /* eslint no-param-reassign: "off" */
 
-import * as api from '@/store/api/csort';
-import * as apiTuan from '@/store/api/tuan';
+import * as api from '@/api/csort';
+import * as apiTuan from '@/api/tuan';
 import { CSORT } from '@/store/types';
 import { showLoading, hideLoading } from '@/store/utils';
 
