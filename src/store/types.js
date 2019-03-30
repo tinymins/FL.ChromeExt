@@ -47,3 +47,7 @@ export const TSELL = exportVar('TSELL', [
   'QUERY_LIST', 'QUERY_LIST_SUCCESS',
   'QUERY_ITEMS', 'QUERY_ITEM_SUCCESS',
 ]);
+
+export const COUPON = exportVar('COUPON', [
+  'GET_CATEGORY', 'GET_LIST',
+]);

@@ -17,6 +17,7 @@ import commonModule from './common';
 import userModule from './user';
 import csortModule from './csort';
 import tsellModule from './tsell';
+import couponModule from './coupon';
 
 Vue.use(Vuex);
 const store = new Vuex.Store({
@@ -31,5 +32,6 @@ store.registerModule('common', commonModule);
 store.registerModule('user', userModule);
 store.registerModule('csort', csortModule);
 store.registerModule('tsell', tsellModule);
+store.registerModule('coupon', couponModule);
 
 export default store;

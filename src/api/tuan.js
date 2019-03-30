@@ -10,6 +10,19 @@
 import cheerio from 'cheerio';
 import { http } from './driver';
 
+export const getCategoryList = () => new Promise((resolve, reject) => {
+  http.get('Tuan/Tuanitem/index/').then((html) => {
+    const list = [];
+    const $ = cheerio.load(html);
+    $('#category').children('option').each((_, element) => {
+      const $el = $(element);
+      list.push({ value: $el.attr('value'), label: $el.text() });
+    });
+    const res = { errcode: 0, errmsg: '', data: list };
+    resolve(res);
+  }).catch(reject);
+});
+
 export const getItemList = ({
   ctimeFrom = '', // 创建时间
   ctimeTo = '', // 创建时间
@@ -85,6 +98,7 @@ export const getItemList = ({
         state: $tds.eq(13).text(),
         csort: $tds.eq(14).find('input').attr('value'),
         bsort: $tds.eq(15).find('input').attr('value'),
+        disabled: $tds.eq(16).find('a:contains("启用")').length > 0,
       });
     });
     const res = { errcode: 0, errmsg: '', data: list };

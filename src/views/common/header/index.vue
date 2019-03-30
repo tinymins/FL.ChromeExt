@@ -37,6 +37,7 @@ export default {
       { name: '用户中心', route: 'user' },
       { name: '超级排序', route: 'csort' },
       { name: '实时榜单', route: 'tsell' },
+      { name: '自动换券', route: 'coupon' },
     ];
     return {
       tabList,

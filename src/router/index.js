@@ -26,6 +26,7 @@ import popupRoute from './modules/popup';
 import csortRoute from './modules/csort';
 import tsellRoute from './modules/tsell';
 import userRoute from './modules/user';
+import couponRoute from './modules/coupon';
 
 const state = {
   // remember entry location info for auto convert
@@ -61,7 +62,7 @@ Vue.prototype.$bar = bar;
 
 Vue.use(VueRouter);
 const routes = [].concat(
-  popupRoute, csortRoute, tsellRoute, userRoute,
+  popupRoute, csortRoute, tsellRoute, couponRoute, userRoute,
   indexRoute, // this one must be the last one
 );
 
