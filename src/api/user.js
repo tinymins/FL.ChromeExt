@@ -32,8 +32,8 @@ export const login = (account, password) => {
   });
 };
 export const logout = () => http.get('Public/logout/');
-export const getUser = () => new Promise((resolve, reject) => {
-  http.get('Public/profile/').then((html) => {
+export const getUser = (strict, silent) => new Promise((resolve, reject) => {
+  http.get('Public/profile/', {}, { silent }).then((html) => {
     const $ = cheerio.load(html);
     const res = {};
     const auth = $('td:contains("没有登录")').length === 0;

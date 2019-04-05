@@ -3,7 +3,7 @@
     <div class="query">
       <el-button type="primary" class="query-btn" @click="startQuery({ reload: true })">刷新列表</el-button>
       <el-button type="primary" class="query-btn" @click="startQuery({ reload: false })">增量获取列表</el-button>
-      <el-button type="primary" class="query-btn" @click="toggleQueryTimer">自动刷新提交 {{ timer ? nextTime - time : '' }}</el-button>
+      <el-button type="primary" class="query-btn" @click="toggleQueryTimer">定点更新 {{ timer ? nextTime - time : '' }}</el-button>
     </div>
     <div class="list">
       <div v-for="(category, i) in categoryList" :key="i" class="list-item">
@@ -31,7 +31,7 @@
 <script>
 import { mapActions } from 'vuex';
 import { Input, Button, Table, TableColumn, Alert } from 'element-ui';
-import { TSELL } from '@/store/types';
+import { USER, TSELL } from '@/store/types';
 
 export default {
   components: {
@@ -85,6 +85,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions('user', {
+      apiGetUser: USER.GET,
+    }),
     ...mapActions('tsell', {
       apiQueryList: TSELL.QUERY_LIST,
       apiGetZcfloor: TSELL.GET_ZCFLOOR,
@@ -141,14 +144,23 @@ export default {
         this.timer = 0;
       } else {
         this.timer = setInterval(() => {
-          this.time = Math.floor(new Date().valueOf() / 1000);
+          const time = new Date();
+          this.time = Math.floor(time.valueOf() / 1000);
           if (this.time > this.nextTime) {
-            this.nextTime = this.time + 3600;
-            this.startQuery({ reload: true }).then(() => {
-              this.commit();
-            });
+            if (this.nextTime) {
+              this.startQuery({ reload: true }).then(() => {
+                this.commit();
+              });
+            }
+            this.nextTime = this.time
+              + ((Math.ceil((time.getHours() + 1) / 2) * 2 - time.getHours()) * 3600)
+              - (time.getMinutes() * 60)
+              - time.getSeconds();
           }
-        });
+          if (this.time % 20 === 0) {
+            this.apiGetUser({ reload: true, silent: true });
+          }
+        }, 1000);
       }
     },
   },

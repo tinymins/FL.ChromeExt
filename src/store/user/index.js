@@ -77,7 +77,7 @@ export default {
           delete window.__INITIAL_STATE__;
         } else {
           return new Promise((resolve, reject) => {
-            const loading = showLoading({ text: '获取当前登录状态' });
+            const loading = silent ? null : showLoading({ text: '获取当前登录状态' });
             api.getUser(strict, silent).then((res) => {
               commit(USER.GET, {
                 status: res.data ? res.errcode : AUTH_STATE.GUEST,
@@ -95,7 +95,9 @@ export default {
                 reject(err);
               }
             }).finally(() => {
-              hideLoading({ id: loading });
+              if (loading) {
+                hideLoading({ id: loading });
+              }
             });
           });
         }
