@@ -3,6 +3,7 @@
     <div class="query">
       <el-button type="primary" class="query-btn" @click="startQuery({ reload: true })">刷新列表</el-button>
       <el-button type="primary" class="query-btn" @click="startQuery({ reload: false })">增量获取列表</el-button>
+      <el-button type="primary" class="query-btn" @click="toggleQueryTimer">自动刷新提交 {{ timer ? nextTime - time : '' }}</el-button>
     </div>
     <div class="list">
       <div v-for="(category, i) in categoryList" :key="i" class="list-item">
@@ -73,7 +74,15 @@ export default {
         { id: 3751, dst: '配饰', src: [{ name: '配饰', count: 20 }], list: [], uids: '', done: false },
         { id: 3753, dst: '运动户外', src: [{ name: '户外运动', count: 20 }], list: [], uids: '', done: false },
       ],
+      timer: 0,
+      time: 0,
+      nextTime: 0,
     };
+  },
+  beforeDestroy() {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
   },
   methods: {
     ...mapActions('tsell', {
@@ -125,6 +134,22 @@ export default {
           resolve();
         }).catch(reject);
       })));
+    },
+    toggleQueryTimer() {
+      if (this.timer) {
+        clearInterval(this.timer);
+        this.timer = 0;
+      } else {
+        this.timer = setInterval(() => {
+          this.time = Math.floor(new Date().valueOf() / 1000);
+          if (this.time > this.nextTime) {
+            this.nextTime = this.time + 3600;
+            this.startQuery({ reload: true }).then(() => {
+              this.commit();
+            });
+          }
+        });
+      }
     },
   },
 };
