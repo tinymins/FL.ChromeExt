@@ -25,6 +25,12 @@ export default [
         meta: { title: '实时榜单' },
         component: () => import('@/views/tsell/realtime.vue'),
       },
+      {
+        name: 'tsell_category',
+        path: 'category',
+        meta: { title: '分类榜单' },
+        component: () => import('@/views/tsell/category.vue'),
+      },
     ],
   },
 ];

@@ -5,9 +5,10 @@
  * @modifier : Emil Zhai (root@derzh.com)
  * @copyright: Copyright (c) 2018 TINYMINS.
  */
-/* eslint no-param-reassign: ["error", { "props": false }] */
+/* eslint no-param-reassign: "off" */
 
 import * as api from '@/api/tsell';
+import * as apiTuan from '@/api/tuan';
 import { TSELL } from '@/store/types';
 import { showLoading, hideLoading } from '@/store/utils';
 
@@ -18,24 +19,33 @@ export default {
     html: null,
     htmls: [],
     goods: [],
+    lock: false,
   },
   getters: {},
   actions: {
-    [TSELL.QUERY_LIST]({ commit, state }, params) {
-      if (!state.html || state.url !== params.url) {
-        params.reload = true;
+    [TSELL.QUERY_LIST]({ commit, state }, { action, url }) {
+      const cacheUsable = state.html && state.url === url;
+      if ((!action || action === 'more') && !cacheUsable) {
+        action = 'reload';
+      } else if (action === 'refresh' && !cacheUsable) {
+        action = '';
       }
-      if (params.reload) {
-        commit(TSELL.QUERY_LIST);
+      if (action) {
+        commit(TSELL.QUERY_LIST, { status: 'start', action });
         return new Promise((resolve, reject) => {
-          const loading = showLoading({ text: `正在从 ${params.url} 中获取数据` });
-          api.queryList(params.url).then((res) => {
-            commit(TSELL.QUERY_LIST_SUCCESS, {
-              url: params.url,
+          const loading = showLoading({ text: `正在从 ${url} 中获取数据` });
+          api.queryList(url).then((res) => {
+            commit(TSELL.QUERY_LIST, {
+              status: 'success',
+              action,
+              url,
               list: res.data,
             });
-            resolve();
-          }).catch(reject).finally(() => {
+            resolve(res);
+          }).catch((err) => {
+            commit(TSELL.QUERY_LIST, { status: 'failure', action });
+            reject(err);
+          }).finally(() => {
             hideLoading({ id: loading });
           });
         });
@@ -67,13 +77,30 @@ export default {
       }
       return Promise.resolve();
     },
+    [TSELL.GET_ZCFLOOR](_, { id }) {
+      return apiTuan.getTuanNewzcFloor(id);
+    },
+    [TSELL.SET_ZCFLOOR](_, { form, json }) {
+      return apiTuan.setTuanNewzcFloor({ form, json });
+    },
   },
   mutations: {
-    [TSELL.QUERY_LIST](state) {
-      state.url = '';
-      state.html = '';
-      state.goods = [];
-      state.htmls = [];
+    [TSELL.QUERY_LIST](state, { status, action, url, list }) {
+      if (status === 'start') {
+        if (action !== 'query') {
+          state.url = '';
+          state.html = '';
+          state.goods = [];
+          state.htmls = [];
+          state.lock = true;
+        }
+      } else if (action !== 'query') {
+        if (status === 'success') {
+          state.url = url;
+          state.goods = list;
+        }
+        state.lock = false;
+      }
     },
     [TSELL.QUERY_LIST_SUCCESS](state, { url, list }) {
       state.url = url;

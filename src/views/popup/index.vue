@@ -1,8 +1,8 @@
 <template>
   <div class="menu">
     <el-button type="primary" class="menu-item" @click="popupCsort">超级排序</el-button>
-    <el-button type="primary" class="menu-item" @click="popupTsell">实时榜单</el-button>
-    <el-button type="primary" class="menu-item" @click="popupCoupon">自动换券</el-button>
+    <el-button type="primary" class="menu-item" @click="popupTsellTops">实时榜单</el-button>
+    <el-button type="primary" class="menu-item" @click="popupTsellCategory">分类榜单</el-button>
   </div>
 </template>
 <script>
@@ -17,11 +17,11 @@ export default {
     popupCsort() {
       popupWindow('index.html#/csort', true);
     },
-    popupTsell() {
-      popupWindow('index.html#/tsell', true);
+    popupTsellTops() {
+      popupWindow('index.html#/tsell/tops', true);
     },
-    popupCoupon() {
-      popupWindow('index.html#/coupon', true);
+    popupTsellCategory() {
+      popupWindow('index.html#/tsell/category', true);
     },
   },
 };

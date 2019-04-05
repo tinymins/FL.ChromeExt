@@ -9,6 +9,7 @@
 /* eslint-disable camelcase */
 import cheerio from 'cheerio';
 import { http } from './driver';
+import { parseCheerioForm } from '../utils/transfer';
 
 export const getCategoryList = () => new Promise((resolve, reject) => {
   http.get('Tuan/Tuanitem/index/').then((html) => {
@@ -103,5 +104,29 @@ export const getItemList = ({
     });
     const res = { errcode: 0, errmsg: '', data: list };
     resolve(res);
+  }).catch(reject);
+});
+
+export const getTuanNewzcFloor = id => new Promise((resolve, reject) => {
+  http.get(`/Tuan/TuanNewzcFloor/edit/id/${id}`).then((html) => {
+    const $ = cheerio.load(html);
+    const form = parseCheerioForm($, 'form');
+    const json = parseCheerioForm($, 'form', 'data-name');
+    const res = { errcode: 0, errmsg: '', data: { form, json } };
+    resolve(res);
+  }).catch(reject);
+});
+
+export const setTuanNewzcFloor = ({ form, json }) => new Promise((resolve, reject) => {
+  const data = Object.assign({ ajaxType: 1 }, form, { floor_item_json: JSON.stringify([json]) });
+  http.get('/Tuan/TuanNewzcFloor/update/', data).then(() => {
+    const formData = new FormData();
+    Object.entries(data).forEach(([k, v]) => {
+      if (k === 'ajaxType') {
+        return;
+      }
+      formData.set(k, v);
+    });
+    http.post('/Tuan/TuanNewzcFloor/update/', formData).then(resolve);
   }).catch(reject);
 });

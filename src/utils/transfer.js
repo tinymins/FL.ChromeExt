@@ -662,3 +662,38 @@ export const mosaicString = (str, prefixLen, suffixLen) => {
   }
   return `${str.substr(0, prefixLen)}${'*'.repeat(plainLen)}${str.substr(str.length - suffixLen)}`;
 };
+
+export const parseCheerioForm = ($, selector, nameKey = 'name') => {
+  const form = {};
+  const $form = $(selector);
+  $form.find('input').each((i, el) => {
+    const $el = $(el);
+    const name = $el.attr(nameKey) || $el.attr('name');
+    const type = $el.attr('type');
+    if (name) {
+      if (type === 'radio') {
+        if ($el.attr('default-value') === $el.attr('value')) {
+          form[name] = $el.attr('value');
+        }
+      } else if (type === 'file') {
+        form[name] = $el.attr('index-name');
+      } else if (type !== 'submit') {
+        form[name] = $el.attr('value');
+      }
+    }
+  });
+  $form.find('select').each((i, el) => {
+    const $el = $(el);
+    $el.find('option').each((j, elOp) => {
+      const $elOp = $(elOp);
+      if ($elOp.attr('selected')) {
+        form[$el.attr(nameKey)] = $elOp.attr('value');
+      }
+    });
+  });
+  $form.find('textarea').each((i, el) => {
+    const $el = $(el);
+    form[$el.attr(nameKey)] = $el.text();
+  });
+  return form;
+};

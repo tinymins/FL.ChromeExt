@@ -3,13 +3,17 @@
     <div class="nav-wrapper">
       <div class="nav">
         <el-menu :default-active="selected" class="nav-menu" mode="horizontal" router>
-          <el-menu-item
-            v-for="(tab, index) of tabList" :key="index"
-            :index="tab.route"
-            :route="{ name: tab.route }"
-          >
-            <router-link :to="tab.route" style="text-decoration: none;">{{ tab.name }}</router-link>
-          </el-menu-item>
+          <template v-for="(tabs, i) of tabsList">
+            <el-menu-item v-if="tabs.length === 1" :key="i" :index="tabs[0].name" :route="tabs[0].route">
+              <div>{{ tabs[0].label }}</div>
+            </el-menu-item>
+            <el-submenu v-else :key="i" :index="`${i}`">
+              <template slot="title">{{ tabsSel[i].label }}</template>
+              <el-menu-item v-for="(tab, j) of tabs" :key="`${i}-${j}`" :index="tab.name" :route="tab.route">
+                <div>{{ tab.label }}</div>
+              </el-menu-item>
+            </el-submenu>
+          </template>
         </el-menu>
         <div class="nav-user">
           <span>{{ user ? user.name : '请先登录' }}</span>
@@ -21,43 +25,44 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { Menu, MenuItem } from 'element-ui';
+import { Menu, Submenu, MenuItem } from 'element-ui';
 import { USER } from '@/store/types';
 
 export default {
   components: {
     [Menu.name]: Menu,
+    [Submenu.name]: Submenu,
     [MenuItem.name]: MenuItem,
   },
   asyncData({ store }) {
     return store.dispatch(`user/${USER.GET}`);
   },
   data() {
-    const tabList = [
-      { name: '用户中心', route: 'user' },
-      { name: '超级排序', route: 'csort' },
-      { name: '实时榜单', route: 'tsell' },
-      { name: '自动换券', route: 'coupon' },
-    ];
     return {
-      tabList,
+      tabsList: [
+        [{ name: 'user', label: '用户中心', route: { name: 'user' } }],
+        [{ name: 'csort', label: '超级排序', route: { name: 'csort' } }],
+        [
+          { name: 'tsell_realtime', label: '实时榜单', route: { name: 'tsell_realtime' } },
+          { name: 'tsell_category', label: '分类榜单', route: { name: 'tsell_category' } },
+        ],
+        // [{ name: 'coupon', label: '自动换券', route: { name: 'coupon' } }],
+      ],
     };
   },
   computed: {
     ...mapGetters('user', ['user']),
-    selected: {
-      set(name) {
-        this.$router.push({ name });
-      },
-      get() {
-        let name = this.$route.name;
-        Object.values(this.$route.matched).forEach((r) => {
-          if (r.meta.tabbar) {
-            name = r.meta.tabbar.replace(/[^/]+\//u, '');
-          }
-        });
-        return name;
-      },
+    selected() {
+      let name = this.$route.name;
+      Object.values(this.$route.matched).forEach((r) => {
+        if (r.meta.tabbar) {
+          name = r.meta.tabbar.replace(/[^/]+\//u, '');
+        }
+      });
+      return name;
+    },
+    tabsSel() {
+      return this.tabsList.map(tabs => tabs.find(tab => tab.route.name === this.$route.name) || tabs[0]);
     },
   },
 };

@@ -26,7 +26,8 @@ export const queryList = url => new Promise((resolve, reject) => {
         discountUrl: '',
       });
     });
-    const res = { errcode: 0, errmsg: '', data: list };
+    const category = $('li.curl').text() || '';
+    const res = { errcode: 0, errmsg: '', data: list, extra: { category } };
     resolve(res);
   }).catch(reject);
 });

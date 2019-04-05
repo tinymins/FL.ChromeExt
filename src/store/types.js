@@ -46,6 +46,7 @@ export const CSORT = exportVar('CSORT', [
 export const TSELL = exportVar('TSELL', [
   'QUERY_LIST', 'QUERY_LIST_SUCCESS',
   'QUERY_ITEMS', 'QUERY_ITEM_SUCCESS',
+  'GET_ZCFLOOR', 'SET_ZCFLOOR',
 ]);
 
 export const COUPON = exportVar('COUPON', [
