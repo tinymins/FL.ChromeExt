@@ -21,6 +21,7 @@
     "npm": ">=5.0"
   },
   "dependencies": {
+    "@types/cheerio": "^0.22.11",
     "axios": "^0.18.0",
     "element-ui": "^2.4.11",
     "fastclick": "^1.0.6",
