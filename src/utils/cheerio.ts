@@ -52,7 +52,7 @@ export const parseRadio = ($: CheerioStatic, name: string | Cheerio): SelectData
     value: '',
     options: [],
   };
-  getEl($, 'radio', name).each((i, el) => {
+  getEl($, 'input', name).each((i, el) => {
     const $el = $(el);
     const option = {
       value: $el.attr('value'),
