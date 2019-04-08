@@ -6,12 +6,25 @@
  * @copyright: Copyright (c) 2018 TINYMINS.
  */
 import cheerio from 'cheerio';
-import { http } from './driver';
+import http from './driver';
+import { HttpResponseData } from './driver/http';
 
-export const queryList = url => new Promise((resolve, reject) => {
-  http.get(url).then((html) => {
-    const list = [];
-    const $ = cheerio.load(html);
+interface TsellItem {
+  id: string;
+  uid: string;
+  name: string;
+  finalPrice: number;
+  discount: number;
+  planNum: number;
+  planType: string;
+  url: string;
+  discountUrl: string;
+}
+
+export const queryList = (url): Promise<HttpResponseData> => new Promise((resolve, reject) => {
+  http.get(url).then((res) => {
+    const list: TsellItem[] = [];
+    const $ = cheerio.load(res.data);
     $('.goods-item').each((_, element) => {
       const $goods = $(element);
       list.push({
@@ -27,21 +40,19 @@ export const queryList = url => new Promise((resolve, reject) => {
       });
     });
     const category = $('li.curl').text() || '';
-    const res = { errcode: 0, errmsg: '', data: list, extra: { category } };
-    resolve(res);
+    resolve({ errcode: 0, errmsg: 'OK', data: list, extra: { category } });
   }).catch(reject);
 });
 
-export const queryItem = id => new Promise((resolve, reject) => {
-  http.get('http://www.dataoke.com/gettpl', {}, { params: { gid: id, _: (new Date()).valueOf() } }).then((html) => {
-    const $ = cheerio.load(html);
+export const queryItem = (id): Promise<HttpResponseData> => new Promise((resolve, reject) => {
+  http.get('http://www.dataoke.com/gettpl', { gid: id }).then((res) => {
+    const $ = cheerio.load(res.data);
     const data = {
       uid: $('a').last().attr('href').replace(/(.*id=|\D.*)/igu, ''),
       img: $('img').attr('src'),
       url: $('a').last().attr('href'),
       discountUrl: $('a').first().attr('href'),
     };
-    const res = { errcode: 0, errmsg: '', data };
-    resolve(res);
+    resolve({ errcode: 0, errmsg: 'OK', data });
   }).catch(reject);
 });
