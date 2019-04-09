@@ -6,8 +6,6 @@
  * @copyright: Copyright (c) 2018 TINYMINS.
  */
 
-import 'cheerio';
-
 interface SelectData {
   value: any;
   options: { value: any; label: string }[];
