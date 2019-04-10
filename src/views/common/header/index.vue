@@ -15,7 +15,7 @@
             </el-submenu>
           </template>
         </el-menu>
-        <div class="nav-user">
+        <div class="nav-user" @click="onUserClick">
           <span>{{ user ? user.name : '请先登录' }}</span>
         </div>
       </div>
@@ -63,6 +63,15 @@ export default {
     },
     tabsSel() {
       return this.tabsList.map(tabs => tabs.find(tab => tab.route.name === this.$route.name) || tabs[0]);
+    },
+  },
+  methods: {
+    onUserClick() {
+      if (this.user) {
+        this.$router.push({ name: 'user' });
+      } else {
+        this.$router.push({ name: 'user_login', query: { redirect: this.$route.fullPath } });
+      }
     },
   },
 };
