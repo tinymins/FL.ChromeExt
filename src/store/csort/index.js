@@ -41,14 +41,16 @@ export default {
               category: 0,
               subCategoryid: 0,
             }).then((res) => {
-              Promise.all(res.data.map(item => new Promise((rs, rj) => {
-                apiTuan.getTuanItem(item.id).then((resItem) => {
-                  item.soldOut = resItem.data.sellout === '1' ? '是' : '否';
-                  rs();
-                }).catch(rj);
-              }))).then(() => {
-                commit(CSORT.QUERY_SUCCESS, { list: res.data });
-              });
+              // Promise.all(res.data.map(item => new Promise((rs, rj) => {
+              //   apiTuan.getTuanItem(item.id).then((resItem) => {
+              //     item.soldOut = resItem.data.sellout === '1' ? '是' : '否';
+              //     rs();
+              //   }).catch(rj);
+              // }))).then(() => {
+              //   commit(CSORT.QUERY_SUCCESS, { list: res.data });
+              //   next();
+              // });
+              commit(CSORT.QUERY_SUCCESS, { list: res.data });
               next();
             }).catch(() => {
               next();
