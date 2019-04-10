@@ -3,7 +3,7 @@
     <div class="query">
       <el-button type="primary" class="query-btn" @click="startQuery({ reload: true })">刷新列表</el-button>
       <el-button type="primary" class="query-btn" @click="startQuery({ reload: false })">增量获取列表</el-button>
-      <el-button type="primary" class="query-btn" @click="toggleQueryTimer">定点更新 {{ timer ? nextTime - time : '' }}</el-button>
+      <el-button type="primary" class="query-btn" @click="toggleQueryTimer" :disabled="!user">定点更新 {{ dispTimer }}</el-button>
     </div>
     <div class="list">
       <div v-for="(category, i) in categoryList" :key="i" class="list-item">
@@ -29,7 +29,7 @@
   </div>
 </template>
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import { Input, Button, Table, TableColumn, Alert } from 'element-ui';
 import { USER, TSELL } from '@/store/types';
 
@@ -78,6 +78,15 @@ export default {
       time: 0,
       nextTime: 0,
     };
+  },
+  computed: {
+    ...mapGetters('user', ['user']),
+    dispTimer() {
+      if (!this.user) {
+        return '请先登录';
+      }
+      return this.timer ? this.nextTime - this.time : '';
+    },
   },
   beforeDestroy() {
     if (this.timer) {
