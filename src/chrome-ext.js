@@ -18,7 +18,7 @@ document.documentElement.className = 'pc';
 // Fake all web requests' referer.
 if (window.chrome && window.chrome.webRequest && window.chrome.webRequest.onBeforeSendHeaders) {
   window.chrome.webRequest.onBeforeSendHeaders.addListener((details) => {
-    const headers = {};
+    const blockingResponse = {};
     if (details.type === 'xmlhttprequest') {
       const referer = details.requestHeaders.find(h => h.name === 'Referer');
       if (referer) {
@@ -26,10 +26,10 @@ if (window.chrome && window.chrome.webRequest && window.chrome.webRequest.onBefo
       } else {
         details.requestHeaders.push({ name: 'Referer', value: details.url });
       }
-      headers.requestHeaders = details.requestHeaders;
+      blockingResponse.requestHeaders = details.requestHeaders;
     }
-    return headers;
-  }, { urls: ['http://*/*', 'https://*/*'] }, ['requestHeaders', 'blocking']);
+    return blockingResponse;
+  }, { urls: ['<all_urls>'] }, ['requestHeaders', 'blocking']);
 }
 
 mountVue();

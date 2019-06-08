@@ -13,8 +13,8 @@
     "activeTab",
     "webRequest",
     "webRequestBlocking",
-    "http://trace.51fanli.com/",
-    "http://www.dataoke.com/top_sell/"
+    "*://trace.51fanli.com/",
+    "*://www.dataoke.com/"
   ],
   "web_accessible_resources": ["scripts.insert/*"]
 }
