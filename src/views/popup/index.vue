@@ -2,7 +2,7 @@
   <div class="menu">
     <template v-if="mounted">
       <el-button type="primary" class="menu-item" @click="popupCsort">超级排序</el-button>
-      <el-button type="primary" class="menu-item" @click="popupTsellTops">实时榜单</el-button>
+      <el-button type="primary" class="menu-item" @click="popupTsellRealtime">实时榜单</el-button>
       <el-button type="primary" class="menu-item" @click="popupTsellCategory">分类榜单</el-button>
     </template>
   </div>
@@ -28,8 +28,8 @@ export default {
     popupCsort() {
       popupWindow('index.html#/csort', true);
     },
-    popupTsellTops() {
-      popupWindow('index.html#/tsell/tops', true);
+    popupTsellRealtime() {
+      popupWindow('index.html#/tsell/realtime', true);
     },
     popupTsellCategory() {
       popupWindow('index.html#/tsell/category', true);
