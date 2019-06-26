@@ -207,7 +207,7 @@ export const setTuanNewzcFloor = ({ form, json }): Promise<void> => new Promise(
   http.get('/Tuan/TuanNewzcFloor/update/', data).then(() => {
     const formData = new FormData();
     Object.entries(data).forEach(([k, v]) => {
-      if (k === 'ajaxType') {
+      if (k === 'ajaxType' || v === void 0 || v === null) {
         return;
       }
       formData.set(k, v);
