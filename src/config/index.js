@@ -20,8 +20,8 @@ export const AUTH_REDIRECT = {
   [AUTH_STATE.GUEST]: 'user_login',
   [AUTH_STATE.UNREGISTERED]: 'user_register',
 };
-export const BASE_HOST = 'http://trace.51fanli.com/';
+export const BASE_HOST = 'https://trace.51fanli.com/';
 export const ICON_URL = '';
-export const BASE_API_URL = 'http://trace.51fanli.com/index.php/';
+export const BASE_API_URL = 'https://trace.51fanli.com/index.php/';
 export const WECHAT_AUTH_URL = `${BASE_API_URL}/authorize?mode={{reason}}&service={{service}}&redirect_uri={{redirect}}`;
 export const MULTI_REQUEST_URL = null;
