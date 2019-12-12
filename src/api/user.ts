@@ -5,6 +5,7 @@
  * @modifier : Emil Zhai (root@derzh.com)
  * @copyright: Copyright (c) 2018 TINYMINS.
  */
+
 import cheerio from 'cheerio';
 import { AUTH_STATE } from '@/config';
 import http from './driver';

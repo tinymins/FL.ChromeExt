@@ -6,21 +6,23 @@
  * @copyright: Copyright (c) 2018 TINYMINS.
  */
 
+@import '~styles/utils/px2rem';
+
 .main {
-  padding: 0 20px;
+  padding: 0 px2rem(20px);
 }
 
 .query {
   margin: 0;
+  margin-top: px2rem(20px);
   display: flex;
-  margin-top: 20px;
 
   &:last-child {
-    margin-bottom: 20px;
+    margin-bottom: px2rem(20px);
   }
 
-  & > :not(:first-child) {
-    margin-left: 10px;
+  > :not(:first-child) {
+    margin-left: px2rem(10px);
   }
 
   &-btn {
@@ -29,9 +31,9 @@
 }
 
 .list {
-  margin-top: 20px;
+  margin-top: px2rem(20px);
 
   &:last-child {
-    margin-bottom: 20px;
+    margin-bottom: px2rem(20px);
   }
 }

@@ -1,0 +1,72 @@
+/**
+ * This file is part of vue-boilerplate.
+ * @link     : https://zhaiyiming.com/
+ * @author   : Emil Zhai (root@derzh.com)
+ * @modifier : Emil Zhai (root@derzh.com)
+ * @copyright: Copyright (c) 2018 TINYMINS.
+ */
+
+@import '~styles/vars/theme';
+@import '~styles/utils/1px';
+@import '~styles/utils/px2rem';
+
+.dialog {
+  margin-top: px2rem(-64px);
+  padding-top: px2rem(16px);
+  background-color: $theme-light-content-background;
+  border-radius: px2rem(10px);
+
+  @at-root body[color-theme='dark'] & {
+    background-color: $theme-dark-content-background;
+  }
+
+  &__title {
+    padding: px2rem(32px) px2rem(48px) 0;
+    font-size: px2rem(32px);
+    text-align: center;
+  }
+
+  &__content {
+    width: px2rem(512px);
+    padding: px2rem(32px) px2rem(24px) px2rem(48px);
+    font-size: px2rem(28px);
+    line-height: 1.7;
+    text-align: justify;
+    color: $theme-light-secondary-color;
+
+    @at-root body[color-theme='dark'] & {
+      color: $theme-dark-secondary-color;
+    }
+
+    > p {
+      margin: auto;
+      display: table;
+    }
+  }
+
+  &__buttons {
+    display: flex;
+    flex-direction: row-reverse;
+  }
+
+  &__button {
+    position: relative;
+    padding: px2rem(32px);
+
+    &::before {
+      @include set-top-line($theme-light-border-color);
+
+      @at-root body[color-theme='dark'] & {
+        @include set-top-line($theme-dark-border-color);
+      }
+    }
+  }
+
+  &__button + &__button::after {
+    @include set-right-line($theme-light-border-color);
+
+    @at-root body[color-theme='dark'] & {
+      @include set-right-line($theme-dark-border-color);
+    }
+  }
+}

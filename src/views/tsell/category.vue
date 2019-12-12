@@ -106,14 +106,26 @@ export default {
       if (reload) {
         this.dsList = this.dsList.map(ds => Object.assign({}, ds, { list: [] }));
       }
-      for (let i = 0; i < this.dsList.length; i += 1) {
+      let i = 0;
+      const next = () => new Promise((resolve, reject) => {
         const ds = this.dsList[i];
-        if (ds.list.length === 0) {
-          const res = await this.apiQueryList({ url: ds.url }); // eslint-disable-line
-          this.dsList[i].list = res.data;
-          this.dsList[i].name = res.extra.category;
+        if (i < this.dsList.length) {
+          if (ds && ds.list.length === 0) {
+            this.apiQueryList({ url: ds.url }).then((res) => {
+              this.dsList[i].list = res.data;
+              this.dsList[i].name = res.extra.category;
+              i += 1;
+              next().then(resolve).catch(reject);
+            });
+          } else {
+            i += 1;
+            next().then(resolve).catch(reject);
+          }
+        } else {
+          resolve();
         }
-      }
+      });
+      await next();
       this.refreshCategoryList();
     },
     refreshCategoryList() {
@@ -136,12 +148,13 @@ export default {
     commit() {
       return Promise.all(this.categoryList.map(category => new Promise((resolve, reject) => {
         this.apiGetZcfloor({ id: category.id }).then((res) => {
+          const ctg = category;
           const form = res.data.form;
           const json = res.data.json;
-          category.done = true; // eslint-disable-line
-          form['1_h5_num_ids'] = category.uids; // eslint-disable-line
-          json['floor_id'] = form.id; // eslint-disable-line
-          json['h5_num_ids'] = category.uids; // eslint-disable-line
+          ctg.done = true;
+          form['1_h5_num_ids'.toString()] = ctg.uids;
+          json['floor_id'.toString()] = form.id;
+          json['h5_num_ids'.toString()] = ctg.uids;
           this.apiSetZcfloor({ form, json });
           resolve();
         }).catch(reject);
@@ -177,5 +190,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '~styles/views/tsell/category.scss';
+@import '~styles/views/tsell/category';
 </style>

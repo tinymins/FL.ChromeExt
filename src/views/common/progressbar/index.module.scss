@@ -1,0 +1,21 @@
+/**
+ * This file is part of vue-boilerplate.
+ * @link     : https://zhaiyiming.com/
+ * @author   : Emil Zhai (root@derzh.com)
+ * @modifier : Emil Zhai (root@derzh.com)
+ * @copyright: Copyright (c) 2018 TINYMINS.
+ */
+
+@import '~styles/utils/px2rem';
+
+.progress {
+  position: fixed;
+  z-index: 999999;
+  top: 0;
+  right: 0;
+  left: 0;
+  width: 0%;
+  height: px2rem(2px);
+  opacity: 1;
+  transition: width .2s, opacity .4s;
+}

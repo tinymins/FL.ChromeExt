@@ -1,0 +1,181 @@
+/**
+ * This file is part of vue-boilerplate.
+ * @link     : https://zhaiyiming.com/
+ * @author   : Emil Zhai (root@derzh.com)
+ * @modifier : Emil Zhai (root@derzh.com)
+ * @copyright: Copyright (c) 2018 TINYMINS.
+ */
+
+@import '~styles/vars/theme';
+@import '~styles/utils/1px';
+@import '~styles/utils/px2rem';
+
+.picker {
+  background: $theme-light-content-background;
+
+  @at-root body[color-theme='dark'] & {
+    background: $theme-dark-content-background;
+  }
+
+  &__hd {
+    position: relative;
+    height: px2rem(90px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: $theme-light-secondary-color;
+
+    @at-root body[color-theme='dark'] & {
+      color: $theme-dark-secondary-color;
+    }
+
+    &::after {
+      @include set-bottom-line($theme-light-border-color);
+
+      @at-root body[color-theme='dark'] & {
+        @include set-bottom-line($theme-dark-border-color);
+      }
+    }
+  }
+
+  &__title {
+    font-size: px2rem(32px);
+  }
+
+  &__cancel,
+  &__confirm {
+    padding: 0 px2rem(32px);
+    cursor: pointer;
+    font-size: px2rem(30px);
+  }
+
+  &__confirm {
+    color: #32d5c5;
+  }
+
+  &__bd {
+    position: relative;
+  }
+
+  &-shadow {
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    pointer-events: none;
+
+    &__top,
+    &__bottom {
+      flex: 1 1 auto;
+      transform: translateZ(0);
+    }
+
+    &__top {
+      position: relative;
+      background:
+        linear-gradient(0deg,
+        rgba($theme-light-content-background, .4),
+        rgba($theme-light-content-background, .9));
+
+      @at-root body[color-theme='dark'] & {
+        background:
+          linear-gradient(0deg,
+          rgba($theme-dark-content-background, .4),
+          rgba($theme-dark-content-background, .9));
+      }
+
+      &::after {
+        @include set-bottom-line($theme-light-border-color);
+
+        @at-root body[color-theme='dark'] & {
+          @include set-bottom-line($theme-dark-border-color);
+        }
+      }
+    }
+
+    &__center {
+      height: px2rem(72px);
+      flex: 0 0 auto;
+    }
+
+    &__bottom {
+      position: relative;
+      background:
+        linear-gradient(0deg,
+        rgba($theme-light-content-background, .9),
+        rgba($theme-light-content-background, .4));
+
+      @at-root body[color-theme='dark'] & {
+        background:
+          linear-gradient(0deg,
+          rgba($theme-dark-content-background, .9),
+          rgba($theme-dark-content-background, .4));
+      }
+
+      &::after {
+        @include set-top-line($theme-light-border-color);
+
+        @at-root body[color-theme='dark'] & {
+          @include set-top-line($theme-dark-border-color);
+        }
+      }
+    }
+  }
+
+  &-groups {
+    display: flex;
+    overflow-x: hidden;
+  }
+
+  &-group {
+    position: relative;
+    box-sizing: border-box;
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    transition: width .5s ease-in-out;
+
+    &__title {
+      height: px2rem(80px);
+      display: flex;
+      flex: 0 0 auto;
+      justify-content: center;
+      align-items: center;
+      color: $theme-light-primary-color;
+
+      @at-root body[color-theme='dark'] & {
+        color: $theme-dark-primary-color;
+      }
+    }
+
+    &__option {
+      position: relative;
+      flex: 1 1 auto;
+      overflow: auto;
+
+      &::-webkit-scrollbar {
+        width: 0;
+        background: transparent;
+      }
+    }
+  }
+
+  &-item {
+    height: px2rem(64px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: px2rem(30px);
+    user-select: none;
+    transition: font-size .2s ease-in-out;
+
+    &--selected {
+      font-size: px2rem(36px);
+    }
+  }
+}

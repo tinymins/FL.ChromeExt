@@ -1,0 +1,52 @@
+/**
+ * This file is part of vue-boilerplate.
+ * @link     : https://zhaiyiming.com/
+ * @author   : Emil Zhai (root@derzh.com)
+ * @modifier : Emil Zhai (root@derzh.com)
+ * @copyright: Copyright (c) 2018 TINYMINS.
+ */
+
+@import '~styles/utils/px2rem';
+
+.user-id {
+  position: fixed;
+  z-index: 1000;
+  right: 0;
+  bottom: 0;
+  font-size: px2rem(18px);
+  line-height: px2rem(18px);
+  color: #bbbbbb;
+
+  @at-root body[color-theme='dark'] & {
+    color: #333333;
+  }
+}
+
+.safe-area-insets {
+  position: fixed;
+  background: #ffffff;
+
+  &--top {
+    top: 0;
+    right: 0;
+    left: 0;
+  }
+
+  &--right {
+    top: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  &--bottom {
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+
+  &--left {
+    top: 0;
+    bottom: 0;
+    left: 0;
+  }
+}

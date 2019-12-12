@@ -7,8 +7,8 @@
  */
 
 interface SelectData {
-  value: any;
-  options: { value: any; label: string }[];
+  value: unknown;
+  options: { value: unknown; label: string }[];
 }
 
 interface FormInfomation {
@@ -43,7 +43,7 @@ export const parseSelect = ($: CheerioStatic, name: string | Cheerio): SelectDat
   return data;
 };
 
-export const parseSelectValue = ($: CheerioStatic, name: string | Cheerio): any => parseSelect($, name).value;
+export const parseSelectValue = ($: CheerioStatic, name: string | Cheerio): unknown => parseSelect($, name).value;
 
 export const parseRadio = ($: CheerioStatic, name: string | Cheerio): SelectData => {
   const data: SelectData = {
@@ -64,11 +64,11 @@ export const parseRadio = ($: CheerioStatic, name: string | Cheerio): SelectData
   return data;
 };
 
-export const parseRadioValue = ($: CheerioStatic, name: string | Cheerio): any => parseRadio($, name).value;
+export const parseRadioValue = ($: CheerioStatic, name: string | Cheerio): unknown => parseRadio($, name).value;
 
 export const parseTextareaValue = ($: CheerioStatic, name: string | Cheerio): string => getEl($, 'textarea', name).text();
-export const parseInputTextValue = ($: CheerioStatic, name: string | Cheerio): string => getEl($, 'input', name).attr('value');
-export const parseInputHiddenValue = ($: CheerioStatic, name: string | Cheerio): string => getEl($, 'input', name).attr('value');
+export const parseInputTextValue = ($: CheerioStatic, name: string | Cheerio): string => getEl($, 'input', name).attr('value') || '';
+export const parseInputHiddenValue = ($: CheerioStatic, name: string | Cheerio): string => getEl($, 'input', name).attr('value') || '';
 
 export const parseForm = ($, selector): FormInfomation => {
   const form: FormInfomation = {

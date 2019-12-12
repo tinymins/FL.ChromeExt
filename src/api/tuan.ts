@@ -5,15 +5,14 @@
  * @modifier : Emil Zhai (root@derzh.com)
  * @copyright: Copyright (c) 2018 TINYMINS.
  */
-/* eslint-disable id-match */
-/* eslint-disable camelcase */
+
 import cheerio from 'cheerio';
 import { parseCheerioForm } from '@/utils/transfer';
 import { parseSelect, parseSelectValue, parseRadioValue, parseInputTextValue, parseTextareaValue, parseInputHiddenValue } from '@/utils/cheerio';
 import http from './driver';
 import { HttpResponseData } from './driver/http';
 
-export const getCategoryList = (): Promise<HttpResponseData<{ label: string; value: any }[]>> => new Promise((resolve, reject) => {
+export const getCategoryList = (): Promise<HttpResponseData<{ label: string; value: unknown }[]>> => new Promise((resolve, reject) => {
   http.get<string>('Tuan/Tuanitem/index/').then((res) => {
     const $ = cheerio.load(res.data);
     const data = parseSelect($, 'category');
@@ -100,17 +99,17 @@ export const getItemList = ({
       const $item = $(el);
       const $tds = $item.find('td');
       list.push({
-        iid: $item.attr('data-numiid'),
+        iid: $item.attr('data-numiid') || '',
         id: $tds.eq(1).text(),
         createTime: $tds.eq(2).text().replace(/\n.*/igu, '').trim(),
         readyTime: $tds.eq(2).text().replace(/.*\n/igu, '').trim(),
         startTime: $tds.eq(3).text().replace(/\n.*/igu, '').trim(),
         endTime: $tds.eq(3).text().replace(/.*\n/igu, '').trim(),
         title: $tds.eq(4).text(),
-        url: $tds.eq(4).children('a').attr('href'),
+        url: $tds.eq(4).children('a').attr('href') || '',
         youngName: $tds.eq(5).text(),
-        thumb: $tds.eq(6).find('img').attr('src'),
-        image: $tds.eq(6).find('img').attr('data-original'),
+        thumb: $tds.eq(6).find('img').attr('src') || '',
+        image: $tds.eq(6).find('img').attr('data-original') || '',
         priceA: $tds.eq(7).text().replace(/\n.*/igu, '').trim(),
         priceB: $tds.eq(7).text().replace(/.*\n/igu, '').trim(),
         price: $tds.eq(8).text(),
@@ -119,8 +118,8 @@ export const getItemList = ({
         soldOut: $tds.eq(11).text().trim(),
         createUser: $tds.eq(12).text(),
         state: $tds.eq(13).text(),
-        csort: $tds.eq(14).find('input').attr('value'),
-        bsort: $tds.eq(15).find('input').attr('value'),
+        csort: $tds.eq(14).find('input').attr('value') || '',
+        bsort: $tds.eq(15).find('input').attr('value') || '',
         disabled: $tds.eq(16).find('a:contains("启用")').length > 0,
       });
     });
@@ -203,7 +202,7 @@ export const getTuanNewzcFloor = (id): Promise<HttpResponseData> => new Promise(
 });
 
 export const setTuanNewzcFloor = ({ form, json }): Promise<void> => new Promise((resolve, reject) => {
-  const data: Record<string, any> = Object.assign({ ajaxType: 1 }, form, { floor_item_json: JSON.stringify([json]) });
+  const data: Record<string, string> = Object.assign({ ajaxType: 1 }, form, { floor_item_json: JSON.stringify([json]) });
   http.get('/Tuan/TuanNewzcFloor/update/', data).then(() => {
     const formData = new FormData();
     Object.entries(data).forEach(([k, v]) => {

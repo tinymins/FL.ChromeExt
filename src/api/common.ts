@@ -6,6 +6,5 @@
  * @copyright: Copyright (c) 2018 TINYMINS.
  */
 import http from './driver';
-import { HttpResponseData } from './driver/http';
 
-export const getWechatSDKInfo = (url, apis = ''): Promise<HttpResponseData> => http.post('jssdk/config', { url, apis }, { silent: true });
+export const getWechatSDKInfo = (url, apis = '') => http.post('jssdk/config', { url, apis }, { silent: true });

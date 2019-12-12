@@ -33,8 +33,8 @@
     <div class="list">
       <el-table :data="goodsDraft" class="list-table">
         <el-table-column label="图片" width="80">
-          <div slot-scope="scope" style="width: 40px; height: 40px; text-align: center;">
-            <img :src="scope.row.image" style="max-width: 40px; height: 40px;">
+          <div slot-scope="scope" :style="{ width: `40px`, height: '40px', 'text-align': 'center' }">
+            <img :src="scope.row.image" :style="{ height: '40px', 'max-width': '40px' }">
           </div>
         </el-table-column>
         <el-table-column prop="iid" label="商品ID" width="180">
@@ -180,5 +180,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '~styles/views/csort/index.scss';
+@import '~styles/views/csort/index';
 </style>

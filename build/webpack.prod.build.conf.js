@@ -5,17 +5,19 @@
  * @modifier : Emil Zhai (root@derzh.com)
  * @copyright: Copyright (c) 2018 TINYMINS.
  */
+
 const merge = require('webpack-merge');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const MinifyPlugin = require('terser-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const CompressionWebpackPlugin = require('compression-webpack-plugin');
 // const ImageminPlugin = require('imagemin-webpack-plugin').default;
-const SWPrecachePlugin = require('sw-precache-webpack-plugin');
+const { GenerateSW } = require('workbox-webpack-plugin');
 const utils = require('./utils');
 const loader = require('./utils/loader');
+const plugin = require('./utils/plugin');
 const config = require('../config');
 const webpackBaseConfig = require('./webpack.base.conf');
 
@@ -36,6 +38,9 @@ const webpackConfig = merge(webpackBaseConfig, {
   },
   devtool: false,
   plugins: [
+    plugin.stylelintPlugin({
+      failOnError: true,
+    }),
     new BundleAnalyzerPlugin({
       analyzerMode: 'static',
     }),
@@ -55,16 +60,15 @@ const webpackConfig = merge(webpackBaseConfig, {
     //   test: /\.(jpe?g|png|gif|svg)$/i,
     //   cacheFolder: utils.fullPath('node_modules/.cache/imagemin-plugin'),
     // }),
-    new SWPrecachePlugin({
-      cacheId: 'haiman-vue2',
-      filename: 'service-worker.js',
-      minify: true,
-      dontCacheBustUrlsMatching: /./,
-      staticFileGlobsIgnorePatterns: [/\.map$/, /\.json$/],
+    new GenerateSW({
+      cacheId: config.id,
+      swDest: 'service-worker.js',
+      dontCacheBustURLsMatching: /static\//,
+      exclude: [/\.html$/, /\.map$/, /\.json$/],
       runtimeCaching: [
         {
           urlPattern: /\/(m\/static)/,
-          handler: 'networkFirst',
+          handler: 'NetworkFirst',
         },
       ],
     }),
@@ -78,9 +82,15 @@ webpackConfig.optimization.minimizer = [
       safe: true,
     },
   }),
-  new MinifyPlugin({
+  new TerserPlugin({
     cache: false,
     parallel: true,
+    terserOptions: {
+      compress: {
+        collapse_vars: false, // Bug: https://github.com/terser-js/terser/issues/369
+      },
+      mangle: true, // Note `mangle.properties` is `false` by default.
+    },
   }),
 ];
 

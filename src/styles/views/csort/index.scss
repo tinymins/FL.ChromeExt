@@ -6,15 +6,17 @@
  * @copyright: Copyright (c) 2018 TINYMINS.
  */
 
+@import '~styles/utils/px2rem';
+
 .main {
-  padding: 0 40px;
+  padding: 0 px2rem(40px);
 }
 
 .query {
   display: flex;
 
   .textarea {
-    margin: 20px 10px;
+    margin: px2rem(20px) px2rem(10px);
   }
 
   &-btn {
@@ -22,17 +24,17 @@
   }
 
   &-mismatch-alert {
-    margin-bottom: 20px;
+    margin-bottom: px2rem(20px);
   }
 }
 
 .list {
-  margin-top: 40px;
+  margin-top: px2rem(40px);
 }
 
 .submit {
+  margin: px2rem(10px) 0 px2rem(40px);
   display: flex;
-  margin: 10px 0 40px 0;
 
   &-btn {
     flex: 1;

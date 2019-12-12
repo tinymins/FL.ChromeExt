@@ -1,0 +1,21 @@
+/**
+ * This file is part of Fanli chrome extension.
+ * @link     : https://zhaiyiming.com/
+ * @author   : Emil Zhai (root@derzh.com)
+ * @modifier : Emil Zhai (root@derzh.com)
+ * @copyright: Copyright (c) 2018 TINYMINS.
+ */
+
+@import '~styles/utils/px2rem';
+
+.login {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: px2rem(40px) 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.el-alert {
+  padding: 4px 32px;
+}

@@ -5,53 +5,80 @@
  * @modifier : Emil Zhai (root@derzh.com)
  * @copyright: Copyright (c) 2018 TINYMINS.
  */
-@import './utils/reset.scss';
+
+@import './vars/theme';
+@import './utils/reset';
+@import './utils/px2rem';
 
 body,
 html {
-  margin: 0;
-  padding: 0;
   // width: 100%;
   // height: 100%;
+  margin: 0;
+  padding: 0;
   // overflow: hidden;
-  color: #000000;
-  background: #f5f5f5;
+  font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', sans-serif;
   -webkit-overflow-scrolling: touch;
-  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", sans-serif;
+
+  &[color-theme='light'] {
+    color: $theme-light-primary-color;
+
+    &[background='content'] {
+      background: $theme-light-content-background;
+    }
+
+    &[background='blank'] {
+      background: $theme-light-blank-background;
+    }
+  }
+
+  &[color-theme='dark'] {
+    color: $theme-dark-primary-color;
+
+    &[background='content'] {
+      background: $theme-dark-content-background;
+    }
+
+    &[background='blank'] {
+      background: $theme-dark-blank-background;
+    }
+  }
+
+  [allow-user-select] {
+    user-select: text;
+    -webkit-touch-callout: text;
+  }
 }
 
 html {
-  font-size: 42.4PX;
+  font-size: 42.4px;
 }
 
 body {
-  font-size: 28px;
+  font-size: px2rem(28px);
 
   * {
     outline: 0;
-    // outline: 1PX solid cyan !important;
+    // outline: 1px solid cyan !important;
   }
 
   a {
     text-decoration: none;
+    color: #5288c5;
   }
 
   textarea {
-    border: none;
     resize: none;
+    border: hidden;
   }
+}
+
+body.pc {
+  user-select: text;
+  -webkit-touch-callout: text;
 }
 
 body.mobile {
   user-select: none;
   -webkit-touch-callout: none;
-
-  [allow-user-select] {
-    -webkit-touch-callout: initial;
-    -webkit-user-select: initial;
-    -khtml-user-select: initial;
-    -moz-user-select: initial;
-    -ms-user-select: initial;
-    user-select: initial;
-  }
 }

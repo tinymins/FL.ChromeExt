@@ -28,8 +28,8 @@ export const queryList = (url): Promise<HttpResponseData> => new Promise((resolv
     $('.goods-item').each((_, element) => {
       const $goods = $(element);
       list.push({
-        id: $goods.attr('id').replace(/[^\d]/igu, '').trim(),
-        uid: $goods.attr('data_goodsid').trim(),
+        id: ($goods.attr('id') || '').replace(/[^\d]/igu, '').trim(),
+        uid: ($goods.attr('data_goodsid') || '').trim(),
         name: $goods.find('.goods-tit').text().trim(),
         finalPrice: parseFloat($goods.find('.goods-price').text().replace(/[^\d.]/igu, '').trim()),
         discount: parseFloat($goods.find('.goods-quan').text().replace(/[^\d.]/igu, '').trim()),
@@ -48,7 +48,7 @@ export const queryItem = (id): Promise<HttpResponseData> => new Promise((resolve
   http.get('http://www.dataoke.com/gettpl', { gid: id }).then((res) => {
     const $ = cheerio.load(res.data);
     const data = {
-      uid: $('a').last().attr('href').replace(/(.*id=|\D.*)/igu, ''),
+      uid: ($('a').last().attr('href') || '').replace(/(.*id=|\D.*)/igu, ''),
       img: $('img').attr('src'),
       url: $('a').last().attr('href'),
       discountUrl: $('a').first().attr('href'),

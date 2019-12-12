@@ -5,12 +5,10 @@
  * @modifier : Emil Zhai (root@derzh.com)
  * @copyright: Copyright (c) 2018 TINYMINS.
  */
+
 const webpack = require('webpack');
 const WebpackBar = require('webpackbar');
-const PostCompilePlugin = require('webpack-post-compile-plugin');
-const TransformModulesPlugin = require('webpack-transform-modules-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const StylelintBarePlugin = require('stylelint-bare-webpack-plugin');
 const FilterWarningsPlugin = require('webpack-filter-warnings-plugin'); // 连这种东西都需要一个插件 SX
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const ts = require('typescript');
@@ -20,9 +18,35 @@ const config = require('../config');
 
 console.log(`Typescript Version: ${ts.version}`);
 
+// HTML plugin
+// #1669 html-webpack-plugin's default sort uses toposort which cannot
+// handle cyclic deps in certain cases. Monkey patch it to handle the case
+// before we can upgrade to its 4.0 version (incompatible with preload atm)
+const chunkSorters = require('html-webpack-plugin/lib/chunksorter');
+const depSort = chunkSorters.dependency;
+chunkSorters.auto = chunkSorters.dependency = (chunks, ...args) => {
+  try {
+    return depSort(chunks, ...args)
+  } catch (e) {
+    // fallback to a manual sort if that happens...
+    return chunks.sort((a, b) => {
+      // make sure user entry is loaded last so user CSS can override
+      // vendor CSS
+      if (a.id === 'app') {
+        return 1
+      } else if (b.id === 'app') {
+        return -1
+      } else if (a.entry !== b.entry) {
+        return b.entry ? -1 : 1
+      }
+      return 0
+    })
+  }
+}
+
 const webpackConfig = {
   entry: {
-    app: './src/main.js',
+    app: './src/main.ts',
   },
   stats: {
     // https://webpack.js.org/configuration/stats/
@@ -78,7 +102,7 @@ const webpackConfig = {
     },
   },
   resolve: {
-    extensions: ['.js', '.ts', '.tsx', '.vue', '.json'],
+    extensions: ['.js', '.ts', '.d.ts', '.tsx', '.vue', '.json'],
     alias: {
       vue$: 'vue/dist/vue.esm.js',
       '@': utils.fullPath('src'),
@@ -86,7 +110,7 @@ const webpackConfig = {
     },
     modules: [
       utils.fullPath('src'),
-      utils.fullPath('node_modules'),
+      'node_modules',
     ],
   },
   module: {
@@ -130,8 +154,6 @@ const webpackConfig = {
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
     new VueLoaderPlugin(),
     new WebpackBar(),
-    new PostCompilePlugin(),
-    new TransformModulesPlugin(),
     new webpack.ContextReplacementPlugin(
       /moment[\\/]locale$/,
       /^\.\/(zh-cn)$/,
@@ -153,27 +175,10 @@ const webpackConfig = {
     // see https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
       title: config.title,
-      chunksSortMode: 'none',
       filename: 'index.html',
       template: './index.html',
       inject: true,
       favicon: utils.fullPath('src/assets/favicon.ico'),
-    }),
-    new StylelintBarePlugin({
-      configFile: '.stylelintrc.js',
-      files: [
-        'src/**/*.vue',
-        'src/**/*.css',
-        'src/**/*.less',
-        'src/**/*.sass',
-        'src/**/*.scss',
-        '!**/iconfont.css',
-      ],
-      // fix: true,
-      cache: true,
-      cacheLocation: './node_modules/.cache/.stylelintcache',
-      emitErrors: true,
-      failOnError: true,
     }),
     // Silence mini-css-extract-plugin generating lots of warnings for CSS ordering.
     // We use CSS modules that should not care for the order of CSS imports, so we

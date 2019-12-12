@@ -1,3 +1,45 @@
-.a404 {
-  color: red;
+/**
+ * This file is part of vue-boilerplate.
+ * @link     : https://zhaiyiming.com/
+ * @author   : Emil Zhai (root@derzh.com)
+ * @modifier : Emil Zhai (root@derzh.com)
+ * @copyright: Copyright (c) 2018 TINYMINS.
+ */
+
+@import '~styles/vars/theme';
+@import '~styles/utils/1px';
+@import '~styles/utils/px2rem';
+
+.a-404 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.wrong-404-text {
+  margin-top: px2rem(240px);
+  margin-bottom: px2rem(140px);
+  font-size: px2rem(30px);
+  color: $theme-light-tertiary-color;
+
+  @at-root body[color-theme='dark'] & {
+    color: $theme-dark-tertiary-color;
+  }
+}
+
+.wrong-404-btn {
+  width: px2rem(700px);
+  height: px2rem(92px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: px2rem(28px);
+  color: $theme-light-tertiary-color;
+  background: rgba(255, 255, 255, 1);
+  border: px2rem(2px) solid rgba(229, 229, 229, 1);
+  border-radius: px2rem(4px);
+
+  @at-root body[color-theme='dark'] & {
+    color: $theme-dark-tertiary-color;
+  }
 }

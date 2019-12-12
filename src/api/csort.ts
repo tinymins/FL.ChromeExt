@@ -5,8 +5,6 @@
  * @modifier : Emil Zhai (root@derzh.com)
  * @copyright: Copyright (c) 2018 TINYMINS.
  */
-/* eslint-disable id-match */
-/* eslint-disable camelcase */
 
 import http from './driver';
 import { HttpResponseData } from './driver/http';

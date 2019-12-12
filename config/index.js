@@ -13,6 +13,7 @@ const isRun = process.env.NODE_ACTION === 'run';
 const isProd = process.env.NODE_ENV === 'production';
 
 module.exports = {
+  id: 'fl-opt',
   title: 'FL.Opt',
   env: {
     NODE_ENV: process.env.NODE_ENV,
@@ -45,6 +46,4 @@ module.exports = {
   // In our experience, they generally work as expected,
   // just be aware of this issue when enabling this option.
   sourceMap: !isProd,
-  // see https://www.npmjs.com/package/px2rem
-  px2rem: { remUnit: 75 },
 };

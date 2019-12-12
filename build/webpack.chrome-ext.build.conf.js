@@ -5,6 +5,7 @@
  * @modifier : Emil Zhai (root@derzh.com)
  * @copyright: Copyright (c) 2018 TINYMINS.
  */
+
 const merge = require('webpack-merge');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const utils = require('./utils');
@@ -13,7 +14,7 @@ const webpackBuildConfig = require('./webpack.prod.build.conf');
 
 const webpackConfig = merge(webpackBuildConfig, {
   entry: {
-    app: './src/chrome-ext.js',
+    app: './src/chrome-ext.ts',
   },
   plugins: [
     // copy custom static assets

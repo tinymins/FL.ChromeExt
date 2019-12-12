@@ -69,5 +69,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '~styles/views/tsell/realtime.scss';
+@import '~styles/views/tsell/realtime';
 </style>
