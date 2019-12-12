@@ -3,7 +3,7 @@
   "name": "FL Opt",
   "short_name": "FL Opt",
   "description": "让FL后台网页更好用",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "browser_action": {
     "default_popup": "index.html#/popup",
     "default_title": "FL Opt - 爱月的宅"
