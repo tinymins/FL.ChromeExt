@@ -45,7 +45,7 @@ export const queryList = (url): Promise<HttpResponseData> => new Promise((resolv
 });
 
 export const queryItem = (id): Promise<HttpResponseData> => new Promise((resolve, reject) => {
-  http.get('http://www.dataoke.com/gettpl', { gid: id }).then((res) => {
+  http.get('https://www.dataoke.com/gettpl', { gid: id }).then((res) => {
     const $ = cheerio.load(res.data);
     const data = {
       uid: ($('a').last().attr('href') || '').replace(/(.*id=|\D.*)/igu, ''),

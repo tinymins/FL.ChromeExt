@@ -35,7 +35,7 @@ export default {
   },
   data() {
     return {
-      url: 'http://www.dataoke.com/top_sell',
+      url: 'https://www.dataoke.com/top_sell',
     };
   },
   computed: {
