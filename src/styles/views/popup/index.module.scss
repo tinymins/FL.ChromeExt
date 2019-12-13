@@ -19,6 +19,11 @@
 
   &-item {
     margin: px2rem(5px) 0;
+    display: flex;
     flex: 1;
+
+    &__btn {
+      flex: 1;
+    }
   }
 }
