@@ -18,9 +18,9 @@
   background-color: #d2e1f6;
 
   &-item {
+    flex: 1;
     margin: px2rem(5px) 0;
     display: flex;
-    flex: 1;
 
     &__btn {
       flex: 1;
